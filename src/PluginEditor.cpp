@@ -33,12 +33,24 @@ SinensisAudioProcessorEditor::SinensisAudioProcessorEditor(
 
     //--------------------------------------------------------
     */
-addAndMakeVisible(title);
-addAndMakeVisible(bandControl);
-addAndMakeVisible(Q);
-addAndMakeVisible(midiMode);
 
-    setSize(1200, 400);
+   addAndMakeVisible (checkTheTimeButton);
+        checkTheTimeButton.setButtonText ("Check the time...");
+        checkTheTimeButton.addListener (this); // [7]
+ 
+        addAndMakeVisible (timeLabel);
+        timeLabel.setColour (juce::Label::backgroundColourId, juce::Colours::black);
+        timeLabel.setColour (juce::Label::textColourId, juce::Colours::white);
+        timeLabel.setJustificationType (juce::Justification::centred);
+ 
+        setSize (600, 110);
+        
+// addAndMakeVisible(title);
+// addAndMakeVisible(bandControl);
+// addAndMakeVisible(Q);
+// addAndMakeVisible(midiMode);
+
+    // setSize(1200, 400);
 }
 
 SinensisAudioProcessorEditor::~SinensisAudioProcessorEditor()
@@ -46,17 +58,17 @@ SinensisAudioProcessorEditor::~SinensisAudioProcessorEditor()
 }
 
 //==============================================================================
-void SinensisAudioProcessorEditor::paint (juce::Graphics& g)
-{
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-   // g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+// void SinensisAudioProcessorEditor::paint (juce::Graphics& g)
+// {
+//     // (Our component is opaque, so we must completely fill the background with a solid colour)
+//    // g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
 
-    g.fillAll(juce::Colours::grey);
-    g.setColour (juce::Colours::black);
-    //g.setFont (15.0f);
-   //g.drawFittedText("Sinensis", 0, 0, getWidth(), 30, juce::Justification::centred, 1);
+//     // g.fillAll(juce::Colours::grey);
+//     // g.setColour (juce::Colours::black);
+//     //g.setFont (15.0f);
+//    //g.drawFittedText("Sinensis", 0, 0, getWidth(), 30, juce::Justification::centred, 1);
 
-}
+// }
 
 void SinensisAudioProcessorEditor::resized()
 {
@@ -66,9 +78,28 @@ void SinensisAudioProcessorEditor::resized()
 
     bounds.reduce(20, 20);
 
-    midiMode.setBounds(bounds.removeFromLeft(300));
-    title.setBounds(bounds.removeFromTop(100));
-    bandControl.setBounds(bounds.removeFromRight(600));
-    Q.setBounds(bounds);
+    timeLabel.setBounds(bounds.removeFromLeft(50));
+    checkTheTimeButton.setBounds(bounds);
+
+    // midiMode.setBounds(bounds.removeFromLeft(300));
+    // title.setBounds(bounds.removeFromTop(100));
+    // bandControl.setBounds(bounds.removeFromRight(600));
+    // Q.setBounds(bounds);
 
 }
+
+
+void SinensisAudioProcessorEditor::buttonClicked (juce::Button* button)  // [2]
+{
+    if (button == &checkTheTimeButton)                                                      // [3]
+    {
+        auto currentTime = juce::Time::getCurrentTime();                                          // [4]
+
+        auto includeDate = true;
+        auto includeTime = true;
+        auto currentTimeString = currentTime.toString (includeDate, includeTime);           // [5]
+
+        timeLabel.setText (currentTimeString, juce::dontSendNotification);                        // [6]
+    }
+}
+

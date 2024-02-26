@@ -64,7 +64,7 @@ private:
     //==============================================================================
     juce::AudioProcessorValueTreeState::ParameterLayout createParams();
 
-    Sinensis::Parameters sinensis_parameters{ 0, 0, 218.f, 0.707f, 0.f, 1.5f, 0.4f, 0.4f, 0.5f };
+    Sinensis::Parameters sinensis_parameters{ Sinensis::MidiMode::Off, Sinensis::BandMode::LowHigh, 218.f, 0.707f, 0.f, 1.5f, 0.4f, 0.4f, 0.5f };
     Sinensis sinensis[2];
 
 

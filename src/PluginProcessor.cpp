@@ -201,9 +201,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout SinensisAudioProcessor::crea
     params.push_back(std::make_unique<juce::AudioParameterFloat>("ATTACK", "Attack", juce::NormalisableRange<float> { 0.1f, 3.0f, 0.1f }, 0.4f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>("DECAY", "Decay", juce::NormalisableRange<float> { 0.1f, 3.0f, 0.1f }, 0.4f));
 
+    params.push_back(std::make_unique<AudioParameterChoice> ("MIDIMODE", "Midi Mode", StringArray { "Off", "Mono", "Poly" }, 0));
     params.push_back(std::make_unique<juce::AudioParameterBool>("MIDIOFF", "Midi Off", true));
     params.push_back(std::make_unique<juce::AudioParameterBool>("MIDIMONO", "Midi Mono", false));
     params.push_back(std::make_unique<juce::AudioParameterBool>("MIDIPOLY", "Midi Poly", false));
+    
+    params.push_back(std::make_unique<AudioParameterChoice> ("BANDMODE", "Band Mode", StringArray { "Low / High", "Odd / Even", "Peak" }, 0));
 
     params.push_back(std::make_unique<juce::AudioParameterBool>("LOWHIGH", "Low / High", true));
     params.push_back(std::make_unique<juce::AudioParameterBool>("ODDEVEN", "Odd / even", false));

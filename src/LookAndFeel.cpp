@@ -140,3 +140,117 @@
             g.drawFittedText(toggleButton.getName(), bounds, Justification::centred, 1);
        // }
     }
+
+      OtherLookAndFeel::OtherLookAndFeel()
+    {
+        setColour(juce::Slider::thumbColourId, juce::Colours::red);
+    }
+    //! [otherLookAndFeel]
+
+    //! [drawRotarySlider]
+    void Ratio::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
+        const float rotaryStartAngle, const float rotaryEndAngle, juce::Slider& slider)
+        //! [drawRotarySlider]
+    {
+
+
+        //! [locals]
+        auto outline = juce::Colours::black;
+        auto fill = juce::Colours::lightgrey;
+
+        auto bounds = juce::Rectangle<int>(x, y, width, height).toFloat().reduced(10);
+
+        auto radius = juce::jmin(bounds.getWidth(), bounds.getHeight()) / 2.0f;
+        auto toAngle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
+        auto lineW = juce::jmin(1.0f, radius * 0.5f);
+        auto arcRadius = radius - lineW * 0.5f;
+
+        juce::Path backgroundArc;
+        backgroundArc.addCentredArc(bounds.getCentreX(),
+            bounds.getCentreY(),
+            arcRadius,
+            arcRadius,
+            0.0f,
+            rotaryStartAngle,
+            rotaryEndAngle,
+            true);
+
+        g.setColour(outline);
+        g.strokePath(backgroundArc, juce::PathStrokeType(lineW, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+
+        if (slider.isEnabled())
+        {
+            juce::Path valueArc;
+            valueArc.addCentredArc(bounds.getCentreX(),
+                bounds.getCentreY(),
+                arcRadius,
+                arcRadius,
+                0.0f,
+                rotaryStartAngle,
+                toAngle,
+                true);
+
+            g.setColour(fill);
+            g.strokePath(valueArc, juce::PathStrokeType(lineW, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+        }
+
+        //auto thumbWidth = lineW * 2.0f;
+        /*juce::Point<float> thumbPoint(bounds.getCentreX() + arcRadius * std::cos(toAngle - juce::MathConstants<float>::halfPi),
+            bounds.getCentreY() + arcRadius * std::sin(toAngle - juce::MathConstants<float>::halfPi));*/
+
+        g.setColour(slider.findColour(juce::Slider::thumbColourId));
+        // g.fillEllipse(juce::Rectangle<float>(thumbWidth, thumbWidth).withCentre(thumbPoint));
+    }
+
+void Resonance::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
+        const float rotaryStartAngle, const float rotaryEndAngle, juce::Slider& slider)
+        //! [drawRotarySlider]
+    {
+
+float trackWidth = 0.2;
+Point<float> start_point_left = {0, 0};
+Point<float> start_point_right = {width, 0};
+Point<float> control_point_left = {(width / 10)*4, (height/3)*sliderPos};
+Point<float> control_point_right = {(width / 10)*6, (height/3)*sliderPos};
+Point<float> end_position = {width/2, height*sliderPos};
+
+left_curve.startNewSubPath(start_point_left);
+ left_curve.quadraticTo(control_point_left, end_position);
+    g.setColour(slider.findColour(Slider::trackColourId));
+    g.strokePath(left_curve,
+                 {trackWidth, PathStrokeType::curved, PathStrokeType::rounded});
+
+right_curve.startNewSubPath(start_point_right);
+right_curve.quadraticTo(control_point_right, end_position);
+    g.setColour(slider.findColour(Slider::trackColourId));
+    g.strokePath(right_curve,
+                 {trackWidth, PathStrokeType::curved, PathStrokeType::rounded});
+}
+
+void Resonance::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
+        const float rotaryStartAngle, const float rotaryEndAngle, juce::Slider& slider)
+        //! [drawRotarySlider]
+    {
+
+    g.setColour(slider.findColour(Slider::trackColourId));
+// std::Array<Point<float>, 6> start_point;
+// std::Array<Point<float>, 6> end_point;
+
+float trackWidth = 0.2;
+
+start_point[0]= {width/2, height};
+
+float ratio = sliderPos - 0.5;
+ratio *= 20;
+float x_offset = 0;
+middle = width / 2;
+
+for (int i = 0; i<6; i++){
+
+    new_line.startNewSubPath({x_offset + middle, 0});
+    new_line.lineTo({x_offset + middle, height});
+    g.strokePath(new_line, {trackWidth, PathStrokeType::curved, PathStrokeType::rounded});
+    x_offset += ratio * x_offset;
+}
+
+}

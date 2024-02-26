@@ -41,9 +41,9 @@ float Sinensis::processSample(float input) {
 float Sinensis::processSinensis(float input, juce::MidiBuffer& midi_buffer) {
  
     switch (m_parameters.midi_mode) {
-    case 0:prepareMidiOff(); break;
-    case 1:prepareMidiMono(midi_buffer); break;
-    case 2:prepareMidiPoly(midi_buffer); break;
+    case Off:prepareMidiOff(); break;
+    case Mono:prepareMidiMono(midi_buffer); break;
+    case Poly:prepareMidiPoly(midi_buffer); break;
     }
     return processSample(input);
 }
@@ -136,9 +136,9 @@ void Sinensis::computeFrequencyMidiPoly() {
 void Sinensis::computeGain() {
  
   switch (m_parameters.band_selector_mode){
-  case 0:computeLowHigh(); break;
-  case 1:computeOddEven(); break;
-  case 2:computePeak(); break;
+  case LowHigh:computeLowHigh(); break;
+  case OddEven:computeOddEven(); break;
+  case Peak:computePeak(); break;
   }
 
 }

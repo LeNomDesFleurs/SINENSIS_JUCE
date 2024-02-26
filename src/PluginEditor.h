@@ -20,7 +20,8 @@
 //==============================================================================
 /**
 */
-class SinensisAudioProcessorEditor  :   public juce::AudioProcessorEditor
+class SinensisAudioProcessorEditor  :   public juce::AudioProcessorEditor, 
+                                        public juce::Button::Listener
 {
 public:
     SinensisAudioProcessorEditor(SinensisAudioProcessor&, juce::AudioProcessorValueTreeState& vts);
@@ -28,10 +29,11 @@ public:
     ~SinensisAudioProcessorEditor() override;
 
     //==============================================================================
-    void paint (juce::Graphics&) override;
+    // void paint (juce::Graphics&) override;
     void resized() override;
+    void buttonClicked(juce::Button* button) override;
 
-private:
+   private:
 
     OtherLookAndFeel otherLookAndFeel; // [2]
     SinensisAudioProcessor& audioProcessor;
@@ -46,6 +48,9 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>outputVolumeAttachement;
     juce::Label outputVolumeLabel;
 
+
+    juce::TextButton checkTheTimeButton;
+    juce::Label timeLabel;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SinensisAudioProcessorEditor)
 };

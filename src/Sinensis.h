@@ -55,8 +55,20 @@ public:
 
 };
 
+
+
 class Sinensis {
 public:
+enum MidiMode {
+    Off,
+    Mono,
+    Poly 
+};
+enum BandMode{
+    OddEven,
+    LowHigh,
+    Peak
+};
     ///<summary> Parameters of Sinensis </summary>
         /// <param name = "frequency"> </param>
         /// @param float Q
@@ -65,8 +77,8 @@ public:
         /// @param bool gain_Q_link
         /// @param float band_selector_mode
     struct Parameters{
-        int midi_mode;
-        int band_selector_mode;
+        MidiMode midi_mode;
+        BandMode band_selector_mode;
         float root_frequency;
         float resonance;
         float band_selector;
