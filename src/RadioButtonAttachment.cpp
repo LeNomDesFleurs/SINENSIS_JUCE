@@ -1,3 +1,5 @@
+#include "RadioButtonAttachment.hpp"
+
 RadioButtonAttachment::RadioButtonAttachment(RangedAudioParameter& param, juce::Array<juce::Button*>& _buttons,
                                          String componentID, int radioGroupID, UndoManager* um) :
 storedParameter(param),

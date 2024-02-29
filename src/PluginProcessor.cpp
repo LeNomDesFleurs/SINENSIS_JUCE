@@ -202,28 +202,41 @@ juce::AudioProcessorValueTreeState::ParameterLayout SinensisAudioProcessor::crea
     params.push_back(std::make_unique<juce::AudioParameterFloat>("DECAY", "Decay", juce::NormalisableRange<float> { 0.1f, 3.0f, 0.1f }, 0.4f));
 
     params.push_back(std::make_unique<AudioParameterChoice> ("MIDIMODE", "Midi Mode", StringArray { "Off", "Mono", "Poly" }, 0));
-    params.push_back(std::make_unique<juce::AudioParameterBool>("MIDIOFF", "Midi Off", true));
-    params.push_back(std::make_unique<juce::AudioParameterBool>("MIDIMONO", "Midi Mono", false));
-    params.push_back(std::make_unique<juce::AudioParameterBool>("MIDIPOLY", "Midi Poly", false));
+    // params.push_back(std::make_unique<juce::AudioParameterBool>("MIDIOFF", "Midi Off", true));
+    // params.push_back(std::make_unique<juce::AudioParameterBool>("MIDIMONO", "Midi Mono", false));
+    // params.push_back(std::make_unique<juce::AudioParameterBool>("MIDIPOLY", "Midi Poly", false));
     
     params.push_back(std::make_unique<AudioParameterChoice> ("BANDMODE", "Band Mode", StringArray { "Low / High", "Odd / Even", "Peak" }, 0));
 
-    params.push_back(std::make_unique<juce::AudioParameterBool>("LOWHIGH", "Low / High", true));
-    params.push_back(std::make_unique<juce::AudioParameterBool>("ODDEVEN", "Odd / even", false));
-    params.push_back(std::make_unique<juce::AudioParameterBool>("PEAK", "Peak", false));
+    // params.push_back(std::make_unique<juce::AudioParameterBool>("LOWHIGH", "Low / High", true));
+    // params.push_back(std::make_unique<juce::AudioParameterBool>("ODDEVEN", "Odd / even", false));
+    // params.push_back(std::make_unique<juce::AudioParameterBool>("PEAK", "Peak", false));
 
     return { params.begin(), params.end() };
 }
 
 void SinensisAudioProcessor::setParam() {
     //MODE
-    if (*parameters.getRawParameterValue("MIDIMONO")) sinensis_parameters.midi_mode = 1;
-    else if (*parameters.getRawParameterValue("MIDIPOLY")) sinensis_parameters.midi_mode = 2;
-    else sinensis_parameters.midi_mode = 0;
+    // if (*parameters.getRawParameterValue("MIDIMONO")) sinensis_parameters.midi_mode = 1;
+    // else if (*parameters.getRawParameterValue("MIDIPOLY")) sinensis_parameters.midi_mode = 2;
+    // else sinensis_parameters.midi_mode = 0;
+    int midi_mode = static_cast<float> (*parameters.getRawParameterValue("BANDMODE"));
+    switch (midi_mode){
+        case 0: sinensis_parameters.midi_mode = Sinensis::MidiMode::Off;break;
+        case 1: sinensis_parameters.midi_mode = Sinensis::MidiMode::Mono;break;
+        case 2: sinensis_parameters.midi_mode = Sinensis::MidiMode::Poly;break;
+    }
+    int band_mode = static_cast<float> (*parameters.getRawParameterValue("BANDMODE"));
+    switch (band_mode){
+        case 0: sinensis_parameters.band_selector_mode = Sinensis::BandMode::OddEven;break;
+        case 1: sinensis_parameters.band_selector_mode = Sinensis::BandMode::LowHigh;break;
+        case 2: sinensis_parameters.band_selector_mode = Sinensis::BandMode::Peak;break;
+    }
 
-    if (*parameters.getRawParameterValue("LOWHIGH")) sinensis_parameters.band_selector_mode = 0;
-    else if(*parameters.getRawParameterValue("ODDEVEN")) sinensis_parameters.band_selector_mode = 1;
-    else sinensis_parameters.band_selector_mode = 2;
+
+    // if (*parameters.getRawParameterValue("LOWHIGH")) sinensis_parameters.band_selector_mode = 0;
+    // else if(*parameters.getRawParameterValue("ODDEVEN")) sinensis_parameters.band_selector_mode = 1;
+    // else sinensis_parameters.band_selector_mode = 2;
     //PARAM
     sinensis_parameters.root_frequency = *parameters.getRawParameterValue("root_frequency");
     sinensis_parameters.ratio = *parameters.getRawParameterValue("RATIO");

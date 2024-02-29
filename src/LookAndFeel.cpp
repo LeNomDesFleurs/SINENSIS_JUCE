@@ -10,10 +10,10 @@
 
 #include "LookAndFeel.h"
 
-    OtherLookAndFeel::OtherLookAndFeel()
-    {
-        setColour(juce::Slider::thumbColourId, juce::Colours::red);
-    }
+    // OtherLookAndFeel::OtherLookAndFeel()
+    // {
+    //     setColour(juce::Slider::thumbColourId, juce::Colours::red);
+    // }
     //! [otherLookAndFeel]
 
     //! [drawRotarySlider]
@@ -141,14 +141,10 @@
        // }
     }
 
-      OtherLookAndFeel::OtherLookAndFeel()
-    {
-        setColour(juce::Slider::thumbColourId, juce::Colours::red);
-    }
     //! [otherLookAndFeel]
 
     //! [drawRotarySlider]
-    void Ratio::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
+    void RatioLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
         const float rotaryStartAngle, const float rotaryEndAngle, juce::Slider& slider)
         //! [drawRotarySlider]
     {
@@ -202,17 +198,20 @@
         // g.fillEllipse(juce::Rectangle<float>(thumbWidth, thumbWidth).withCentre(thumbPoint));
     }
 
-void Resonance::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
+void ResonanceLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
         const float rotaryStartAngle, const float rotaryEndAngle, juce::Slider& slider)
         //! [drawRotarySlider]
     {
-
+float fwidth = static_cast<float>(width);
+float fheight = static_cast<float>(height);
 float trackWidth = 0.2;
 Point<float> start_point_left = {0, 0};
-Point<float> start_point_right = {width, 0};
-Point<float> control_point_left = {(width / 10)*4, (height/3)*sliderPos};
-Point<float> control_point_right = {(width / 10)*6, (height/3)*sliderPos};
-Point<float> end_position = {width/2, height*sliderPos};
+Point<float> start_point_right = {fwidth, 0};
+Point<float> control_point_left = {(fwidth / 10)*4, (fheight/3)*sliderPos};
+Point<float> control_point_right = {(fwidth / 10)*6, (fheight/3)*sliderPos};
+Point<float> end_position = {fwidth/2, fheight*sliderPos};
+
+juce::Path left_curve, right_curve;
 
 left_curve.startNewSubPath(start_point_left);
  left_curve.quadraticTo(control_point_left, end_position);
@@ -227,7 +226,7 @@ right_curve.quadraticTo(control_point_right, end_position);
                  {trackWidth, PathStrokeType::curved, PathStrokeType::rounded});
 }
 
-void Resonance::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
+void EnvelopeLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
         const float rotaryStartAngle, const float rotaryEndAngle, juce::Slider& slider)
         //! [drawRotarySlider]
     {
@@ -235,22 +234,54 @@ void Resonance::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int
     g.setColour(slider.findColour(Slider::trackColourId));
 // std::Array<Point<float>, 6> start_point;
 // std::Array<Point<float>, 6> end_point;
-
+float fwidth = static_cast<float>(width);
+float fheight = static_cast<float>(height);
 float trackWidth = 0.2;
 
-start_point[0]= {width/2, height};
+// Point<float> start_point[1]= {fwidth/2, fheight};
 
-float ratio = sliderPos - 0.5;
-ratio *= 20;
-float x_offset = 0;
-middle = width / 2;
+// float ratio = sliderPos - 0.5;
+// ratio *= 20;
+// float x_offset = 0;
+// float middle = fwidth / 2;
 
-for (int i = 0; i<6; i++){
+// for (int i = 0; i<6; i++){
+//     juce::Path new_line;
+//     new_line.startNewSubPath({x_offset + middle, 0});
+//     new_line.lineTo({x_offset + middle, fheight});
+//     g.strokePath(new_line, {trackWidth, PathStrokeType::curved, PathStrokeType::rounded});
+//     x_offset += ratio * x_offset;
+// }
 
-    new_line.startNewSubPath({x_offset + middle, 0});
-    new_line.lineTo({x_offset + middle, height});
-    g.strokePath(new_line, {trackWidth, PathStrokeType::curved, PathStrokeType::rounded});
-    x_offset += ratio * x_offset;
 }
+
+
+
+void BandSelectLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
+        const float rotaryStartAngle, const float rotaryEndAngle, juce::Slider& slider)
+        //! [drawRotarySlider]
+    {
+
+    g.setColour(slider.findColour(Slider::trackColourId));
+// std::Array<Point<float>, 6> start_point;
+// std::Array<Point<float>, 6> end_point;
+float fwidth = static_cast<float>(width);
+float fheight = static_cast<float>(height);
+float trackWidth = 0.2;
+
+// Point<float> start_point[1]= {fwidth/2, fheight};
+
+// float ratio = sliderPos - 0.5;
+// ratio *= 20;
+// float x_offset = 0;
+// float middle = fwidth / 2;
+
+// for (int i = 0; i<6; i++){
+//     juce::Path new_line;
+//     new_line.startNewSubPath({x_offset + middle, 0});
+//     new_line.lineTo({x_offset + middle, fheight});
+//     g.strokePath(new_line, {trackWidth, PathStrokeType::curved, PathStrokeType::rounded});
+//     x_offset += ratio * x_offset;
+// }
 
 }
