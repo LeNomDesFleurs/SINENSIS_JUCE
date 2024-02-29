@@ -4,8 +4,9 @@
 -   [ ] Q widget
 -   [ ] Ratio widget
 -   [ ] Band widget
--   [ ] use an enum instead of multiple true false for mode
+-   [x] ~~use an enum instead of multiple true false for mode~~
 -   [x] ~~Clean the ui header mess~~
+-   [ ] replacer tout les widgets dans les bounds
 
 ## Remplacer les modes par des Enum
 
@@ -44,3 +45,9 @@ Obligé de le faire sur le resize ? J'ai besoin de la valeur du bandMode...
 
 Pareil, je vais probablement devoir le faire en paint, faire un slider vide sur le visuel ?
 Donc potentiellement Band et Frequency seraient juste des slider vide
+
+## Bug Editor constructor not recognized
+
+Tout à l'heure c'était un problème de fonction pas implémentée
+je viens de renommer les extensions d'header, y'a bien moyen que ça vienne de là
+Bon visiblement il fallait appeler le header du `editor` dans le cpp de `processor` pour que la classe sois déjà déclarer, j'avoue que ça me semble pas hyper safe ces histoires d'entre header call
