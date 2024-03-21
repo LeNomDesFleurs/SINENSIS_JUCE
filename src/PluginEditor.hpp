@@ -18,6 +18,15 @@
 //==============================================================================
 /**
  */
+
+namespace CustomColors {
+const juce::Colour red = juce::Colour::fromString("FFef3d59");
+const juce::Colour orange = juce::Colour::fromString("FFe17a47");
+const juce::Colour yellow = juce::Colour::fromString("FFEFC958");
+const juce::Colour green = juce::Colour::fromString("FF4AB19D");
+const juce::Colour blue = juce::Colour::fromString("FF344E5C");
+}  // namespace CustomColors
+
 class SinensisAudioProcessorEditor
     : public juce::AudioProcessorEditor,
       public juce::AudioProcessorParameter::Listener,
@@ -40,6 +49,10 @@ class SinensisAudioProcessorEditor
   std::vector<juce::Slider*> getSliderComps();
   void setButtonParameters();
   void setSlidersParameters();
+  juce::Path generateBackground(int size_x, int size_y, int block_size);
+  void addLine(juce::Path& path, int initial_x, int initial_y,
+               int destination_x, int destination_y);
+  void drawBandSelectionWidget(Graphics& g);
 
  private:
   OtherLookAndFeel otherLookAndFeel;  // [2]
@@ -51,6 +64,9 @@ class SinensisAudioProcessorEditor
   SinensisAudioProcessor& audioProcessor;
 
   AudioProcessorValueTreeState* apvts;
+
+  // Background
+  //   juce::Component background;
 
   // SLIDER
 
@@ -81,9 +97,10 @@ class SinensisAudioProcessorEditor
   std::unique_ptr<RadioButtonAttachment> band_modes_radio_group;
 
   juce::Atomic<bool> parametersChanged;
-  juce::Atomic<float> ratio;
-  juce::Atomic<float> band_selector;
-  juce::Atomic<float> root_frequency;
+  float ratio;
+  float band_selector;
+  float root_frequency;
+  bool background_generated = false;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SinensisAudioProcessorEditor)
 };

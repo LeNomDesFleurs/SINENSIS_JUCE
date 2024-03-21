@@ -142,7 +142,7 @@ void OtherLookAndFeel::drawToggleButton(juce::Graphics& g,
   g.drawRoundedRectangle(bounds.toFloat(), cornerSize, 1);
   // text color
   g.setColour(buttonIsOn ? custom_yellow : custom_green);
-  g.setFont(juce::Font("Times New Roman", toggleButton.getHeight(),
+  g.setFont(juce::Font("Times New Roman", toggleButton.getHeight() - 10,
                        juce::Font::italic));
   g.drawFittedText(toggleButton.getName(), bounds, Justification::centred, 1);
   // }
@@ -209,27 +209,33 @@ void ResonanceLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y,
                                             juce::Slider& slider)
 //! [drawRotarySlider]
 {
+  // Paint 2 curves that join at the peak point, the higher the value, the
+  // higher the peak, the two control point level up more slowly to give a
+  // narrower feel
+
   float fwidth = static_cast<float>(width);
   float fheight = static_cast<float>(height);
-  float trackWidth = 0.2;
-  Point<float> start_point_left = {0, 0};
-  Point<float> start_point_right = {fwidth, 0};
+  float trackWidth = 2;
+
+  Point<float> start_point_left = {0, fheight};
+  Point<float> start_point_right = {fwidth, fheight};
   Point<float> control_point_left = {(fwidth / 10) * 4,
-                                     (fheight / 3) * sliderPos};
+                                     fheight - (fheight / 3) * sliderPos};
   Point<float> control_point_right = {(fwidth / 10) * 6,
-                                      (fheight / 3) * sliderPos};
-  Point<float> end_position = {fwidth / 2, fheight * sliderPos};
+                                      fheight - (fheight / 3) * sliderPos};
+  // peak point
+  Point<float> peak_point = {fwidth / 2, fheight - fheight * sliderPos};
 
   juce::Path left_curve, right_curve;
 
   left_curve.startNewSubPath(start_point_left);
-  left_curve.quadraticTo(control_point_left, end_position);
+  left_curve.quadraticTo(control_point_left, peak_point);
   g.setColour(slider.findColour(Slider::trackColourId));
   g.strokePath(left_curve,
                {trackWidth, PathStrokeType::curved, PathStrokeType::rounded});
 
   right_curve.startNewSubPath(start_point_right);
-  right_curve.quadraticTo(control_point_right, end_position);
+  right_curve.quadraticTo(control_point_right, peak_point);
   g.setColour(slider.findColour(Slider::trackColourId));
   g.strokePath(right_curve,
                {trackWidth, PathStrokeType::curved, PathStrokeType::rounded});

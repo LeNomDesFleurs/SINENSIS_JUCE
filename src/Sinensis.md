@@ -4,6 +4,7 @@
 -   [ ] Q widget
 -   [ ] Ratio widget
 -   [ ] Band widget
+-   [ ] Buffer le background
 -   [x] ~~use an enum instead of multiple true false for mode~~
 -   [x] ~~Clean the ui header mess~~
 -   [ ] replacer tout les widgets dans les bounds
@@ -51,3 +52,41 @@ Donc potentiellement Band et Frequency seraient juste des slider vide
 Tout à l'heure c'était un problème de fonction pas implémentée
 je viens de renommer les extensions d'header, y'a bien moyen que ça vienne de là
 Bon visiblement il fallait appeler le header du `editor` dans le cpp de `processor` pour que la classe sois déjà déclarer, j'avoue que ça me semble pas hyper safe ces histoires d'entre header call
+
+## On making Path
+
+Pour dessiner la plupart des choses, il faut
+
+-   instantier un nouveau path
+-   le remplir avec des trucs
+-   le stroke dans un objet graphic
+
+Dans le cas d'une ligne :
+
+```cpp
+juce::Path Lines;
+juce::Point<float> point1, point2;
+lines.startNewSubPath(point1);
+lines.lineTo(point2); //Pas possible de faire les deux d'un coup ??
+g.setColout(juce::Colours::black);
+g.strokePath(lines, {width, PathStrokeType::curved, PathStrokeType::rounded});
+```
+
+Pour faire un rounded Rectangle
+
+```cpp
+juce::Path rounded_rectangle;
+rounded_rectangle.addRoundedRectangle(
+      juce::Rectangle<float>(20, 150, 100, 200), 3);
+//stroke ...
+```
+
+## Paint background
+
+problème : je ne peux pas draw ma fonction à chaque repaint car elle inclut du random, et puis ce serait pas très malin d'un point de vu processeur, dont besoin de trouver un moyen de paint le background une seul fois.
+
+Avec des borne qui ne s'active que la première fois, ça ne marche pas, je suppose que JUCE flush tout le contenu entre deux frames
+
+[Ce thread](https://forum.juce.com/t/ive-asked-this-before-but-nobody-seemed-to-know-the-answer-i-have-a-component-that-draws-a-vertical-line-playhead-but-it-calls-repaint-on-the-parent-i-just-want-to-draw-the-line/31913/2) mentionne `setBufferToImage()`, [documentation ici](https://docs.juce.com/develop/classComponent.html#af19bbc2186e3297ddd55c328e46c014b).
+
+De ce qu'il me semble comprendre, il faut faire un component et appeler sur lui `setBufferedToImage(true)`.
