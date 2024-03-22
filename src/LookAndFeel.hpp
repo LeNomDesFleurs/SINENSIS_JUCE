@@ -9,64 +9,69 @@
 */
 
 #pragma once
+#include "CustomColors.hpp"
+#include "GraphicTools.hpp"
 #include "JuceHeader.h"
+class OtherLookAndFeel : public juce::LookAndFeel_V4 {
+ public:
+  // OtherLookAndFeel();
+  //! [otherLookAndFeel]
 
-class OtherLookAndFeel : public juce::LookAndFeel_V4
-{
-public:
-    // OtherLookAndFeel();
-    //! [otherLookAndFeel]
+  //! [drawRotarySlider]
+  void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height,
+                        float sliderPos, const float rotaryStartAngle,
+                        const float rotaryEndAngle,
+                        juce::Slider& slider) override;
 
-    //! [drawRotarySlider]
-    void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
-        const float rotaryStartAngle, const float rotaryEndAngle, juce::Slider& slider) override;
-
-    void drawToggleButton(juce::Graphics& g,
-        juce::ToggleButton& toggleButton,
-        bool shouldDrawButtonAsHighlighted,
-        bool shouldDrawButtonAsDown) override;
+  void drawToggleButton(juce::Graphics& g, juce::ToggleButton& toggleButton,
+                        bool shouldDrawButtonAsHighlighted,
+                        bool shouldDrawButtonAsDown) override;
 };
 
-class RatioLookAndFeel : public juce::LookAndFeel_V4
-{
-public:
-    // RatioLookAndFeel();
-    //! [otherLookAndFeel]
+class RatioLookAndFeel : public juce::LookAndFeel_V4 {
+ public:
+  // RatioLookAndFeel();
+  //! [otherLookAndFeel]
 
-    //! [drawRotarySlider]
-    void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
-        const float rotaryStartAngle, const float rotaryEndAngle, juce::Slider& slider) override;
+  //! [drawRotarySlider]
+  void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height,
+                        float sliderPos, const float rotaryStartAngle,
+                        const float rotaryEndAngle,
+                        juce::Slider& slider) override;
 };
 
-class ResonanceLookAndFeel : public juce::LookAndFeel_V4
-{
-public:
-    // ResonanceLookAndFeel();
-    //! [otherLookAndFeel]
+class ResonanceLookAndFeel : public juce::LookAndFeel_V4 {
+ public:
+  // ResonanceLookAndFeel();
+  //! [otherLookAndFeel]
 
-    //! [drawRotarySlider]
-    void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
-        const float rotaryStartAngle, const float rotaryEndAngle, juce::Slider& slider) override;
+  //! [drawRotarySlider]
+  void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height,
+                        float sliderPos, const float rotaryStartAngle,
+                        const float rotaryEndAngle,
+                        juce::Slider& slider) override;
 };
 
-class BandSelectLookAndFeel : public juce::LookAndFeel_V4
-{
-public:
-    // BandSelectLookAndFeel();
-    //! [otherLookAndFeel]
+class BandSelectLookAndFeel : public juce::LookAndFeel_V4 {
+ public:
+  // BandSelectLookAndFeel();
+  //! [otherLookAndFeel]
 
-    //! [drawRotarySlider]
-    void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
-        const float rotaryStartAngle, const float rotaryEndAngle, juce::Slider& slider) override;
+  //! [drawRotarySlider]
+  void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height,
+                        float sliderPos, const float rotaryStartAngle,
+                        const float rotaryEndAngle,
+                        juce::Slider& slider) override;
 };
 
-class EnvelopeLookAndFeel : public juce::LookAndFeel_V4
-{
-public:
-    // EnvelopeLookAndFeel();
-    //! [otherLookAndFeel]
+class EnvelopeLookAndFeel : public juce::LookAndFeel_V4 {
+ public:
+  // EnvelopeLookAndFeel();
+  //! [otherLookAndFeel]
 
-    //! [drawRotarySlider]
-    void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
-        const float rotaryStartAngle, const float rotaryEndAngle, juce::Slider& slider) override;
+  //! [drawRotarySlider]
+  void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height,
+                        float sliderPos, const float rotaryStartAngle,
+                        const float rotaryEndAngle,
+                        juce::Slider& slider) override;
 };

@@ -10,6 +10,8 @@
 
 #include <JuceHeader.h>
 
+#include "CustomColors.hpp"
+#include "GraphicTools.hpp"
 #include "LookAndFeel.hpp"
 #include "PlaceHolder.hpp"
 #include "PluginProcessor.hpp"
@@ -18,14 +20,6 @@
 //==============================================================================
 /**
  */
-
-namespace CustomColors {
-const juce::Colour red = juce::Colour::fromString("FFef3d59");
-const juce::Colour orange = juce::Colour::fromString("FFe17a47");
-const juce::Colour yellow = juce::Colour::fromString("FFEFC958");
-const juce::Colour green = juce::Colour::fromString("FF4AB19D");
-const juce::Colour blue = juce::Colour::fromString("FF344E5C");
-}  // namespace CustomColors
 
 class SinensisAudioProcessorEditor
     : public juce::AudioProcessorEditor,
@@ -53,6 +47,7 @@ class SinensisAudioProcessorEditor
   void addLine(juce::Path& path, int initial_x, int initial_y,
                int destination_x, int destination_y);
   void drawBandSelectionWidget(Graphics& g);
+  void drawFrequencyWidget(juce::Graphics& g);
   juce::Colour getGradient(float value);
   void updateGains();
   void computeLowHigh();
@@ -110,4 +105,4 @@ class SinensisAudioProcessorEditor
   Sinensis::BandMode band_selector_mode;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SinensisAudioProcessorEditor)
-};
+  };

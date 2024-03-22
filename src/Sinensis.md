@@ -28,7 +28,8 @@ Sur [ce thread](https://forum.juce.com/t/combobox-and-audioparameterchoice/31332
 
 ## Q widget
 
--   [ ] le peak coupe en haut et les courbe coupe en bas, ajouter des marge en fonction de l'épaisseur
+-   [x] le peak coupe en haut et les courbe coupe en bas, ajouter des marge en fonction de l'épaisseur
+-   [x] ajouter couleur
 
 Assez simple, deux courbe quatratic qui se font face avec les points de contrôle qui monte moins vite que le peak
 
@@ -39,6 +40,7 @@ Placer un centre, ajouter ou soustraire en fonction du ratio
 ## Band Widget
 
 -   [ ] offset, ne se remplit jamais complètement
+-   [ ] réduire l'opacité du background des sliders
 -   [x] ~~Utiliser un gradient sur les sliders en fonction du type de mode~~
 -   [x] ~~plus simple -> couleur en fontion du gain, trouver une interpolation qui fait sens (rouge -> vert fait un dégradé grisouille moche)~~
 -   [x] ~~O|E instead of Odd Even and L|H to save size ?~~

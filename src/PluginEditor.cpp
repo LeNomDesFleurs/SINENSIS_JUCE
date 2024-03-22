@@ -66,6 +66,7 @@ void SinensisAudioProcessorEditor::paint(juce::Graphics& g) {
   g.fillRoundedRectangle(20, 370, 260, 100, 5);
 
   drawBandSelectionWidget(g);
+  drawFrequencyWidget(g);
 
   // draw amp
 }
@@ -92,8 +93,10 @@ void SinensisAudioProcessorEditor::resized() {
   oddEvenButton.setBounds(buttonBounds.removeFromLeft(temp_width));
   peakButton.setBounds(buttonBounds.removeFromLeft(temp_width));
 
-  QSlider.setBounds(25, 150, 250, 83);
+  cutoffFrequencySlider.setBounds(25, 113, 260, 80);
+  QSlider.setBounds(25, 190, 250, 80);
   BandSelectorSlider.setBounds(30, 380, 250, 83);
+  ratioSlider.setBounds(25, 280, 250, 60);
 
   // midiMode.setBounds(bounds.removeFromLeft(300));
   // title.setBounds(bounds.removeFromTop(100));
@@ -141,7 +144,7 @@ void SinensisAudioProcessorEditor::setButtonParameters() {
   band_modes_buttons.add(&lowHighButton);
   band_modes_buttons.add(&peakButton);
 
-   midi_modes_radio_group = std::make_unique<RadioButtonAttachment>(
+  midi_modes_radio_group = std::make_unique<RadioButtonAttachment>(
       *apvts->getParameter("MIDIMODE"), midi_modes_buttons, "MIDIMODE", 1);
   band_modes_radio_group = std::make_unique<RadioButtonAttachment>(
       *apvts->getParameter("BANDMODE"), band_modes_buttons, "BANDMODE", 2);
@@ -192,13 +195,13 @@ void SinensisAudioProcessorEditor::parameterValueChanged(int parameterIndex,
     //   if (newValue) band_selector_mode = Sinensis::BandMode::OddEven;
     //   break;
     case 2:
-      ratio = newValue * 10 + 4;
+      root_frequency = newValue;
       break;
     case 5:
       band_selector = newValue;
       break;
     case 4:
-      root_frequency = newValue > 0.5;
+      // root_frequency = newValue;
       break;
   }
 }
@@ -216,29 +219,13 @@ juce::Path SinensisAudioProcessorEditor::generateBackground(int size_x,
   for (int i = 0; i < size_x; i += block_size) {
     for (int j = 0; j < size_y; j += block_size) {
       if (true) {
-        addLine(motif, i + block_size, j, i, j + block_size);
+        GraphicTools::addLine(motif, i + block_size, j, i, j + block_size);
       } else {
-        addLine(motif, i, j, i + block_size, j + block_size);
+        GraphicTools::addLine(motif, i, j, i + block_size, j + block_size);
       }
     }
   }
   return motif;
-}
-
-void SinensisAudioProcessorEditor::addLine(juce::Path& path, int initial_x,
-                                           int initial_y, int destination_x,
-                                           int destination_y) {
-  float f_initial_x, f_initial_y, f_destination_x, f_destination_y;
-  f_initial_x = static_cast<float>(initial_x);
-  f_initial_y = static_cast<float>(initial_y);
-  f_destination_x = static_cast<float>(destination_x);
-  f_destination_y = static_cast<float>(destination_y);
-
-  juce::Point<float> begin{f_initial_x, f_initial_y};
-  juce::Point<float> end{f_destination_x, f_destination_y};
-
-  path.startNewSubPath(begin);
-  path.lineTo(end);
 }
 
 void SinensisAudioProcessorEditor::drawBandSelectionWidget(Graphics& g) {
@@ -268,27 +255,8 @@ void SinensisAudioProcessorEditor::drawBandSelectionWidget(Graphics& g) {
     g.strokePath(lines_background,
                  {5, PathStrokeType::curved, PathStrokeType::rounded});
 
-    g.setColour(getGradient(gains[i]));
+    g.setColour(CustomColors::getGradient(gains[i]));
     g.strokePath(lines, {5, PathStrokeType::curved, PathStrokeType::rounded});
-  }
-}
-
-/// @brief return a gradient that goes from custom green to custom red by going
-/// trought yellow and orange
-/// @param value
-/// @return
-juce::Colour SinensisAudioProcessorEditor::getGradient(float value) {
-  if (value < 0.33) {
-    value *= 3;
-    return CustomColors::green.interpolatedWith(CustomColors::yellow, value);
-  } else if (value > 0.33 && value < 0.66) {
-    value -= 0.33;
-    value *= 3;
-    return CustomColors::yellow.interpolatedWith(CustomColors::orange, value);
-  } else if (value > 0.66) {
-    value -= 0.66;
-    value *= 3;
-    return CustomColors::orange.interpolatedWith(CustomColors::red, value);
   }
 }
 
@@ -370,4 +338,20 @@ void SinensisAudioProcessorEditor::computePeak() {
     }
     gains[i] = band_gain;
   }
+}
+
+void SinensisAudioProcessorEditor::drawFrequencyWidget(juce::Graphics& g) {
+  float x_position = 28;
+  float y_position = 114;
+  float width = 255;
+  float height = 70;
+  juce::Path lines;
+
+  GraphicTools::addLine(lines, x_position + (width * root_frequency),
+                        y_position, x_position + (width * root_frequency),
+                        y_position + height);
+
+  g.setColour(CustomColors::getGradient(root_frequency));
+  // g.setColour(CustomColors::red);
+  g.strokePath(lines, {5, PathStrokeType::curved, PathStrokeType::rounded});
 }

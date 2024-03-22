@@ -158,47 +158,43 @@ void RatioLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y,
                                         juce::Slider& slider)
 //! [drawRotarySlider]
 {
-  //! [locals]
-  auto outline = juce::Colours::black;
-  auto fill = juce::Colours::lightgrey;
+  float fwidth = static_cast<float>(width) - 5;
+  float fheight = static_cast<float>(height) - 5;
+  float trackWidth = 2;
+  juce::Path lines;
 
-  auto bounds = juce::Rectangle<int>(x, y, width, height).toFloat().reduced(10);
-
-  auto radius = juce::jmin(bounds.getWidth(), bounds.getHeight()) / 2.0f;
-  auto toAngle =
-      rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
-  auto lineW = juce::jmin(1.0f, radius * 0.5f);
-  auto arcRadius = radius - lineW * 0.5f;
-
-  juce::Path backgroundArc;
-  backgroundArc.addCentredArc(bounds.getCentreX(), bounds.getCentreY(),
-                              arcRadius, arcRadius, 0.0f, rotaryStartAngle,
-                              rotaryEndAngle, true);
-
-  g.setColour(outline);
-  g.strokePath(backgroundArc,
-               juce::PathStrokeType(lineW, juce::PathStrokeType::curved,
-                                    juce::PathStrokeType::rounded));
-
-  if (slider.isEnabled()) {
-    juce::Path valueArc;
-    valueArc.addCentredArc(bounds.getCentreX(), bounds.getCentreY(), arcRadius,
-                           arcRadius, 0.0f, rotaryStartAngle, toAngle, true);
-
-    g.setColour(fill);
-    g.strokePath(valueArc,
-                 juce::PathStrokeType(lineW, juce::PathStrokeType::curved,
-                                      juce::PathStrokeType::rounded));
+  float bipolar_slider_pos;
+  if (sliderPos < 0.5) {
+    bipolar_slider_pos = sliderPos * 2;
+    bipolar_slider_pos = 1 - bipolar_slider_pos;
+  } else {
+    bipolar_slider_pos = sliderPos - 0.5;
+    bipolar_slider_pos *= 2;
   }
 
-  // auto thumbWidth = lineW * 2.0f;
-  /*juce::Point<float> thumbPoint(bounds.getCentreX() + arcRadius *
-     std::cos(toAngle - juce::MathConstants<float>::halfPi), bounds.getCentreY()
-     + arcRadius * std::sin(toAngle - juce::MathConstants<float>::halfPi));*/
+  float middle = fwidth / 2.f;
+  float max_size = fwidth / 2.f;
+  float max_ratio = fwidth / 6.f;
+  max_ratio *= bipolar_slider_pos / 1.6;
 
-  g.setColour(slider.findColour(juce::Slider::thumbColourId));
-  // g.fillEllipse(juce::Rectangle<float>(thumbWidth,
-  // thumbWidth).withCentre(thumbPoint));
+  float ratio = sliderPos * 2;
+
+  GraphicTools::addLine(lines, middle, 0, middle, fheight);
+
+  float x_position = middle;
+  for (int i = 0; i < 5; i++) {
+    if (sliderPos > 0.5) {
+      x_position += max_ratio;
+    } else {
+      x_position -= max_ratio;
+    }
+    GraphicTools::addLine(lines, x_position, 10 + (i * 10), x_position,
+                          fheight);
+  }
+
+  g.setColour(CustomColors::getGradient(bipolar_slider_pos));
+  g.strokePath(lines,
+               {trackWidth, PathStrokeType::curved, PathStrokeType::rounded});
 }
 
 void ResonanceLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y,
@@ -212,31 +208,31 @@ void ResonanceLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y,
   // Paint 2 curves that join at the peak point, the higher the value, the
   // higher the peak, the two control point level up more slowly to give a
   // narrower feel
-
-  float fwidth = static_cast<float>(width);
-  float fheight = static_cast<float>(height);
+  // added padding to avoid clipping
+  float fwidth = static_cast<float>(width) - 5;
+  float fheight = static_cast<float>(height) - 5;
   float trackWidth = 2;
 
-  Point<float> start_point_left = {0, fheight};
+  Point<float> start_point_left = {5, fheight};
   Point<float> start_point_right = {fwidth, fheight};
   Point<float> control_point_left = {(fwidth / 10) * 4,
                                      fheight - (fheight / 3) * sliderPos};
   Point<float> control_point_right = {(fwidth / 10) * 6,
                                       fheight - (fheight / 3) * sliderPos};
   // peak point
-  Point<float> peak_point = {fwidth / 2, fheight - fheight * sliderPos};
+  Point<float> peak_point = {fwidth / 2,
+                             fheight - (fheight * sliderPos * 0.8f)};
 
   juce::Path left_curve, right_curve;
 
   left_curve.startNewSubPath(start_point_left);
   left_curve.quadraticTo(control_point_left, peak_point);
-  g.setColour(slider.findColour(Slider::trackColourId));
+  g.setColour(CustomColors::getGradient(sliderPos));
   g.strokePath(left_curve,
                {trackWidth, PathStrokeType::curved, PathStrokeType::rounded});
 
   right_curve.startNewSubPath(start_point_right);
   right_curve.quadraticTo(control_point_right, peak_point);
-  g.setColour(slider.findColour(Slider::trackColourId));
   g.strokePath(right_curve,
                {trackWidth, PathStrokeType::curved, PathStrokeType::rounded});
 }
@@ -254,7 +250,7 @@ void EnvelopeLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y,
   // std::Array<Point<float>, 6> end_point;
   float fwidth = static_cast<float>(width);
   float fheight = static_cast<float>(height);
-  float trackWidth = 0.2;
+  float trackWidth = 3;
 
   // Point<float> start_point[1]= {fwidth/2, fheight};
 
