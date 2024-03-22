@@ -226,7 +226,7 @@ void SinensisAudioProcessor::setParam() {
   //  (*parameters.getRawParameterValue("MIDIPOLY"))
   //  sinensis_parameters.midi_mode = 2; else sinensis_parameters.midi_mode = 0;
   int midi_mode =
-      static_cast<float>(*parameters.getRawParameterValue("BANDMODE"));
+      static_cast<float>(*parameters.getRawParameterValue("MIDIMODE"));
   switch (midi_mode) {
     case 0:
       sinensis_parameters.midi_mode = Sinensis::MidiMode::Off;

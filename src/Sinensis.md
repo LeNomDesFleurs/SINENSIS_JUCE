@@ -8,6 +8,7 @@
 -   [x] ~~use an enum instead of multiple true false for mode~~
 -   [x] ~~Clean the ui header mess~~
 -   [ ] replacer tout les widgets dans les bounds
+-   [ ] charte d'épaisseur des traits ?
 
 ## Remplacer les modes par des Enum
 
@@ -27,6 +28,8 @@ Sur [ce thread](https://forum.juce.com/t/combobox-and-audioparameterchoice/31332
 
 ## Q widget
 
+-   [ ] le peak coupe en haut et les courbe coupe en bas, ajouter des marge en fonction de l'épaisseur
+
 Assez simple, deux courbe quatratic qui se font face avec les points de contrôle qui monte moins vite que le peak
 
 ## Ratio widget
@@ -34,6 +37,11 @@ Assez simple, deux courbe quatratic qui se font face avec les points de contrôl
 Placer un centre, ajouter ou soustraire en fonction du ratio
 
 ## Band Widget
+
+-   [ ] offset, ne se remplit jamais complètement
+-   [x] ~~Utiliser un gradient sur les sliders en fonction du type de mode~~
+-   [x] ~~plus simple -> couleur en fontion du gain, trouver une interpolation qui fait sens (rouge -> vert fait un dégradé grisouille moche)~~
+-   [x] ~~O|E instead of Odd Even and L|H to save size ?~~
 
 Obligé de le faire sur le resize ? J'ai besoin de la valeur du bandMode...
 
@@ -81,6 +89,12 @@ rounded_rectangle.addRoundedRectangle(
 //stroke ...
 ```
 
+Beaucoup plus simple :
+
+````cpp
+g.fillRoundedRectangle(x, y, width, height, corner size);
+```
+
 ## Paint background
 
 problème : je ne peux pas draw ma fonction à chaque repaint car elle inclut du random, et puis ce serait pas très malin d'un point de vu processeur, dont besoin de trouver un moyen de paint le background une seul fois.
@@ -90,3 +104,4 @@ Avec des borne qui ne s'active que la première fois, ça ne marche pas, je supp
 [Ce thread](https://forum.juce.com/t/ive-asked-this-before-but-nobody-seemed-to-know-the-answer-i-have-a-component-that-draws-a-vertical-line-playhead-but-it-calls-repaint-on-the-parent-i-just-want-to-draw-the-line/31913/2) mentionne `setBufferToImage()`, [documentation ici](https://docs.juce.com/develop/classComponent.html#af19bbc2186e3297ddd55c328e46c014b).
 
 De ce qu'il me semble comprendre, il faut faire un component et appeler sur lui `setBufferedToImage(true)`.
+````

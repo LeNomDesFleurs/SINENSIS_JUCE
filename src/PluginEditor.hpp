@@ -53,6 +53,11 @@ class SinensisAudioProcessorEditor
   void addLine(juce::Path& path, int initial_x, int initial_y,
                int destination_x, int destination_y);
   void drawBandSelectionWidget(Graphics& g);
+  juce::Colour getGradient(float value);
+  void updateGains();
+  void computeLowHigh();
+  void computeOddEven();
+  void computePeak();
 
  private:
   OtherLookAndFeel otherLookAndFeel;  // [2]
@@ -77,7 +82,7 @@ class SinensisAudioProcessorEditor
       attackAttachement, decayAttachement, QAttachement;
 
   // BUTTON
-  juce::ToggleButton lowHighButton{"Low | High"}, oddEvenButton{"Odd | Even"},
+  juce::ToggleButton lowHighButton{"L | H"}, oddEvenButton{"O | E"},
       peakButton{"Peak"};
   std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>
       lowHighButtonAttachement, oddEvenButtonAttachement, peakButtonAttachement;
@@ -101,6 +106,8 @@ class SinensisAudioProcessorEditor
   float band_selector;
   float root_frequency;
   bool background_generated = false;
+  std::array<float, 6> gains;
+  Sinensis::BandMode band_selector_mode;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SinensisAudioProcessorEditor)
 };

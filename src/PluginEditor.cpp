@@ -85,6 +85,7 @@ void SinensisAudioProcessorEditor::resized() {
   midiPolyButton.setBounds(buttonBounds.removeFromLeft(temp_width));
 
   buttonBounds = {25, 355, 250, 30};
+  buttonBounds = {70, 355, 170, 30};
   temp_width = buttonBounds.getWidth() / 3;
 
   lowHighButton.setBounds(buttonBounds.removeFromLeft(temp_width));
@@ -136,27 +137,11 @@ void SinensisAudioProcessorEditor::setButtonParameters() {
   midi_modes_buttons.add(&midiPolyButton);
 
   juce::Array<juce::Button*> band_modes_buttons;
-  band_modes_buttons.add(&lowHighButton);
   band_modes_buttons.add(&oddEvenButton);
+  band_modes_buttons.add(&lowHighButton);
   band_modes_buttons.add(&peakButton);
 
-  // lowHighButtonAttachement.reset(new
-  // juce::AudioProcessorValueTreeState::ButtonAttachment(apvts, "LOWHIGH",
-  // lowHighButton)); oddEvenButtonAttachement.reset(new
-  // juce::AudioProcessorValueTreeState::ButtonAttachment(apvts, "ODDEVEN",
-  // oddEvenButton)); peakButtonAttachement.reset(new
-  // juce::AudioProcessorValueTreeState::ButtonAttachment(apvts, "PEAK",
-  // peakButton));
-
-  // midiOffButtonAttachement.reset(new
-  // juce::AudioProcessorValueTreeState::ButtonAttachment(apvts, "MIDIOFF",
-  // midiOffButton)); midiMonoButtonAttachement.reset(new
-  // juce::AudioProcessorValueTreeState::ButtonAttachment(apvts, "MIDIMONO",
-  // midiMonoButton)); midiPolyButtonAttachement.reset(new
-  // juce::AudioProcessorValueTreeState::ButtonAttachment(apvts, "MIDIPOLY",
-  // midiPolyButton));
-
-  midi_modes_radio_group = std::make_unique<RadioButtonAttachment>(
+   midi_modes_radio_group = std::make_unique<RadioButtonAttachment>(
       *apvts->getParameter("MIDIMODE"), midi_modes_buttons, "MIDIMODE", 1);
   band_modes_radio_group = std::make_unique<RadioButtonAttachment>(
       *apvts->getParameter("BANDMODE"), band_modes_buttons, "BANDMODE", 2);
@@ -200,6 +185,12 @@ void SinensisAudioProcessorEditor::parameterValueChanged(int parameterIndex,
                                                          float newValue) {
   parametersChanged.set(true);
   switch (parameterIndex) {
+    // case 0:
+    //   if (newValue) band_selector_mode = Sinensis::BandMode::LowHigh;
+    //   break;
+    // case 1:
+    //   if (newValue) band_selector_mode = Sinensis::BandMode::OddEven;
+    //   break;
     case 2:
       ratio = newValue * 10 + 4;
       break;
@@ -251,14 +242,15 @@ void SinensisAudioProcessorEditor::addLine(juce::Path& path, int initial_x,
 }
 
 void SinensisAudioProcessorEditor::drawBandSelectionWidget(Graphics& g) {
-  juce::Path lines;
-  juce::Path lines_background;
   float marge_basse = 460;
   float taille = 70;
   float x_position = 50;
   float ecart = 40;
   juce::Point<float> point_bas, point_haut;
+  updateGains();
   for (int i = 0; i < 6; i++) {
+    juce::Path lines;
+    juce::Path lines_background;
     // draw slider background
     point_bas = {x_position, marge_basse};
     point_haut = {x_position, marge_basse - (taille)};
@@ -266,15 +258,116 @@ void SinensisAudioProcessorEditor::drawBandSelectionWidget(Graphics& g) {
     lines_background.lineTo(point_haut);
 
     // draw slider value
-    float y_position = (marge_basse + 1) - ((taille * band_selector) - 1);
+    float y_position = (marge_basse + 1) - ((taille * gains[i]) - 1);
     point_haut = {x_position, y_position};
     lines.startNewSubPath(point_bas);
     lines.lineTo(point_haut);
     x_position += ecart;
+
+    g.setColour(juce::Colours::black);
+    g.strokePath(lines_background,
+                 {5, PathStrokeType::curved, PathStrokeType::rounded});
+
+    g.setColour(getGradient(gains[i]));
+    g.strokePath(lines, {5, PathStrokeType::curved, PathStrokeType::rounded});
   }
-  g.setColour(juce::Colours::black);
-  g.strokePath(lines_background,
-               {5, PathStrokeType::curved, PathStrokeType::rounded});
-  g.setColour(juce::Colours::grey);
-  g.strokePath(lines, {5, PathStrokeType::curved, PathStrokeType::rounded});
+}
+
+/// @brief return a gradient that goes from custom green to custom red by going
+/// trought yellow and orange
+/// @param value
+/// @return
+juce::Colour SinensisAudioProcessorEditor::getGradient(float value) {
+  if (value < 0.33) {
+    value *= 3;
+    return CustomColors::green.interpolatedWith(CustomColors::yellow, value);
+  } else if (value > 0.33 && value < 0.66) {
+    value -= 0.33;
+    value *= 3;
+    return CustomColors::yellow.interpolatedWith(CustomColors::orange, value);
+  } else if (value > 0.66) {
+    value -= 0.66;
+    value *= 3;
+    return CustomColors::orange.interpolatedWith(CustomColors::red, value);
+  }
+}
+
+void SinensisAudioProcessorEditor::updateGains() {
+  int band_mode = static_cast<int>(*apvts->getRawParameterValue("BANDMODE"));
+  switch (band_mode) {
+    case 0:
+      band_selector_mode = Sinensis::BandMode::OddEven;
+      break;
+    case 1:
+      band_selector_mode = Sinensis::BandMode::LowHigh;
+      break;
+    case 2:
+      band_selector_mode = Sinensis::BandMode::Peak;
+      break;
+  }
+
+  switch (band_selector_mode) {
+    case Sinensis::LowHigh:
+      computeLowHigh();
+      break;
+    case Sinensis::OddEven:
+      computeOddEven();
+      break;
+    case Sinensis::Peak:
+      computePeak();
+      break;
+  }
+}
+
+void SinensisAudioProcessorEditor::computeLowHigh() {
+  float alpha = band_selector * 4.0f - 2.0f;
+  float beta = -2.0f * (band_selector * band_selector) + 1.0f;
+
+  for (int i = 0; i < 6; i++) {
+    float this_band_index = static_cast<float>(i);
+    this_band_index /= 5.0f;
+    float this_band_gain = this_band_index * alpha + beta;
+    if (this_band_gain < 0.0f) {
+      this_band_gain = 0.0f;
+    }
+    gains[i] = this_band_gain;
+  }
+}
+
+void SinensisAudioProcessorEditor::computeOddEven() {
+  for (int i = 0; i < 6; i++) {
+    float this_band_gain = 0;
+    // odd case
+    if (i == 0 || i == 2 || i == 4) {
+      this_band_gain = band_selector;
+    }
+    // even case
+    if (i == 1 || i == 3 || i == 5) {
+      this_band_gain = 1.0f - band_selector;
+    }
+    gains[i] = this_band_gain;
+  }
+}
+
+void SinensisAudioProcessorEditor::computePeak() {
+  float cursor = band_selector;
+  cursor *= 5.;
+  for (int i = 0; i < 6; i++) {
+    float band_index = static_cast<float>(i);
+    float band_gain = 0.0f;
+    if (cursor < band_index) {
+      band_gain = band_index - cursor;
+    } else {
+      band_gain = cursor - band_index;
+    }
+
+    band_gain = 1 - band_gain;
+    if (band_gain > 1.) {
+      band_gain = 1.;
+    }
+    if (band_gain < 0.) {
+      band_gain = 0.;
+    }
+    gains[i] = band_gain;
+  }
 }
