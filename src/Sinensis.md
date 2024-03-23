@@ -5,10 +5,12 @@
 -   [ ] Ratio widget
 -   [ ] Band widget
 -   [ ] Buffer le background
+-   [ ] Ajouter slider attack/decay
 -   [x] ~~use an enum instead of multiple true false for mode~~
 -   [x] ~~Clean the ui header mess~~
 -   [ ] replacer tout les widgets dans les bounds
 -   [ ] charte d'épaisseur des traits ?
+-   [x] ~~passer certain slider en horizontal drag ? (y'avais pas un mode avec les deux)~~
 
 ## Remplacer les modes par des Enum
 
@@ -28,14 +30,18 @@ Sur [ce thread](https://forum.juce.com/t/combobox-and-audioparameterchoice/31332
 
 ## Q widget
 
--   [x] le peak coupe en haut et les courbe coupe en bas, ajouter des marge en fonction de l'épaisseur
--   [x] ajouter couleur
+-   [x] ~~le peak coupe en haut et les courbe coupe en bas, ajouter des marge en fonction de l'épaisseur~~
+-   [x] ~~ajouter couleur~~
+-   [ ] essayer des control point plus bas pour que ça pique plus
 
 Assez simple, deux courbe quatratic qui se font face avec les points de contrôle qui monte moins vite que le peak
 
 ## Ratio widget
 
+-   [ ] calibrer les offsets pour éviter le clipping
+
 Placer un centre, ajouter ou soustraire en fonction du ratio
+utilisation d'une variable bipolaire pour rendre plus facile la suite du travail
 
 ## Band Widget
 
@@ -49,13 +55,18 @@ Obligé de le faire sur le resize ? J'ai besoin de la valeur du bandMode...
 
 ## Frequency cutoff Widget
 
--   [ ] Root Freq
+-   [x] ~~Root Freq~~
 -   [ ] Other bands freq and gain
 -   [ ] Midi Mono Root freq
 -   [ ] Midi Poly Root Freq
 
 Pareil, je vais probablement devoir le faire en paint, faire un slider vide sur le visuel ?
 Donc potentiellement Band et Frequency seraient juste des slider vide
+
+## Attack / Decay
+
+-   [ ] setVisible(false) pour le slider de fréquence
+-   [ ] inspiration slate and ash ?
 
 ## Bug Editor constructor not recognized
 

@@ -152,7 +152,7 @@ void SinensisAudioProcessorEditor::setButtonParameters() {
 
 void SinensisAudioProcessorEditor::setSlidersParameters() {
   for (auto* slider : getSliderComps()) {
-    slider->setSliderStyle(juce::Slider::RotaryVerticalDrag);
+    slider->setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
     slider->setTextBoxStyle(juce::Slider::NoTextBox, false, 0,
                             slider->getTextBoxHeight());
   }
