@@ -10,11 +10,15 @@
 
 #include "LookAndFeel.hpp"
 
-// OtherLookAndFeel::OtherLookAndFeel()
-// {
-//     setColour(juce::Slider::thumbColourId, juce::Colours::red);
-// }
-//! [otherLookAndFeel]
+void EmptyLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y,
+                                        int width, int height, float sliderPos,
+                                        const float rotaryStartAngle,
+                                        const float rotaryEndAngle,
+                                        juce::Slider& slider)
+
+{
+  // g.fillAll(CustomColors::red);
+}
 
 //! [drawRotarySlider]
 void OtherLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y,
@@ -72,55 +76,7 @@ void OtherLookAndFeel::drawToggleButton(juce::Graphics& g,
                                         bool /*shouldDrawButtonAsHighlighted*/,
                                         bool /*shouldDrawButtonAsDown*/) {
   using namespace juce;
-  /*
-  if (auto* pb = dynamic_cast<PowerButton*>(&toggleButton))
-  {
-      Path powerButton;
 
-      auto bounds = toggleButton.getLocalBounds();
-
-      auto size = jmin(bounds.getWidth(), bounds.getHeight()) - 6;
-      auto r = bounds.withSizeKeepingCentre(size, size).toFloat();
-
-      float ang = 30.f; //30.f;
-
-      size -= 6;
-
-      powerButton.addCentredArc(r.getCentreX(),
-          r.getCentreY(),
-          size * 0.5f,
-          size * 0.5f,
-          0.f,
-          degreesToRadians(ang),
-          degreesToRadians(360.f - ang),
-          true);
-
-      powerButton.startNewSubPath(r.getCentreX(), r.getY());
-      powerButton.lineTo(r.getCentre());
-
-      PathStrokeType pst(2.f, PathStrokeType::JointStyle::curved);
-
-      auto color = toggleButton.getToggleState() ? Colours::dimgrey :
-  ColorScheme::getSliderRangeTextColor();
-
-      g.setColour(color);
-      g.strokePath(powerButton, pst);
-      g.drawEllipse(r, 2);
-  }
-  else if (auto* analyzerButton = dynamic_cast<AnalyzerButton*>(&toggleButton))
-  {
-      auto color = !toggleButton.getToggleState() ? Colours::dimgrey :
-  Colour(0u, 172u, 1u);
-
-      g.setColour(color);
-
-      auto bounds = toggleButton.getLocalBounds();
-      g.drawRect(bounds);
-
-      g.strokePath(analyzerButton->randomPath, PathStrokeType(1.f));
-  }
-  else
-  {*/
   auto bounds = toggleButton.getLocalBounds().reduced(2);
 
   auto buttonIsOn = toggleButton.getToggleState();
@@ -133,15 +89,10 @@ void OtherLookAndFeel::drawToggleButton(juce::Graphics& g,
           : toggleButton.findColour(TextButton::ColourIds::buttonColourId));
   g.fillRoundedRectangle(bounds.toFloat(), cornerSize);
 
-  auto custom_yellow = juce::Colour(0xffefc958);
-  auto custom_green = juce::Colour(0xff4ab19d);
-  auto custom_blue = juce::Colour(0xff344e5c);
-
   // button color
-  g.setColour(buttonIsOn ? custom_yellow : custom_green);
+  g.setColour(buttonIsOn ? CustomColors::yellow : CustomColors::green);
   g.drawRoundedRectangle(bounds.toFloat(), cornerSize, 1);
   // text color
-  g.setColour(buttonIsOn ? custom_yellow : custom_green);
   g.setFont(juce::Font("Times New Roman", toggleButton.getHeight() - 10,
                        juce::Font::italic));
   g.drawFittedText(toggleButton.getName(), bounds, Justification::centred, 1);
@@ -175,7 +126,7 @@ void RatioLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y,
   float middle = fwidth / 2.f;
   float max_size = fwidth / 2.f;
   float max_ratio = fwidth / 6.f;
-  max_ratio *= bipolar_slider_pos / 1.6;
+  max_ratio *= bipolar_slider_pos / 1.8;
 
   float ratio = sliderPos * 2;
 
@@ -237,64 +188,63 @@ void ResonanceLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y,
                {trackWidth, PathStrokeType::curved, PathStrokeType::rounded});
 }
 
-void EnvelopeLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y,
-                                           int width, int height,
-                                           float sliderPos,
-                                           const float rotaryStartAngle,
-                                           const float rotaryEndAngle,
-                                           juce::Slider& slider)
+void AttackLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y,
+                                         int width, int height, float sliderPos,
+                                         const float rotaryStartAngle,
+                                         const float rotaryEndAngle,
+                                         juce::Slider& slider)
 //! [drawRotarySlider]
 {
-  g.setColour(slider.findColour(Slider::trackColourId));
-  // std::Array<Point<float>, 6> start_point;
-  // std::Array<Point<float>, 6> end_point;
-  float fwidth = static_cast<float>(width);
-  float fheight = static_cast<float>(height);
-  float trackWidth = 3;
+  auto radius = (float)juce::jmin(width / 2, height / 2) - 10.0f;
+  auto centreX = (float)x + (float)width * 0.5f;
+  auto centreY = (float)y + (float)height * 0.5f;
+  auto rx = centreX - radius;
+  auto ry = centreY - radius;
+  auto rw = radius * 2.0f;
+  auto angle =
+      rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
+  //! [locals]
 
-  // Point<float> start_point[1]= {fwidth/2, fheight};
+  g.setColour(CustomColors::getGradientWithoutGreen(sliderPos));
+  juce::Path p;
+  sliderPos /= 1.6;
+  p.addRoundedRectangle(0 - width / 20, -height / 2., width / 10, height, 5);
+  p.applyTransform(juce::AffineTransform::rotation(sliderPos * 2)
+                       .translated(centreX, centreY));
+  //! [pointer]
+  // pointer
 
-  // float ratio = sliderPos - 0.5;
-  // ratio *= 20;
-  // float x_offset = 0;
-  // float middle = fwidth / 2;
-
-  // for (int i = 0; i<6; i++){
-  //     juce::Path new_line;
-  //     new_line.startNewSubPath({x_offset + middle, 0});
-  //     new_line.lineTo({x_offset + middle, fheight});
-  //     g.strokePath(new_line, {trackWidth, PathStrokeType::curved,
-  //     PathStrokeType::rounded}); x_offset += ratio * x_offset;
-  // }
+  g.fillPath(p);
+  //! [pointer]
 }
 
-void BandSelectLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y,
-                                             int width, int height,
-                                             float sliderPos,
-                                             const float rotaryStartAngle,
-                                             const float rotaryEndAngle,
-                                             juce::Slider& slider)
+void DecayLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y,
+                                        int width, int height, float sliderPos,
+                                        const float rotaryStartAngle,
+                                        const float rotaryEndAngle,
+                                        juce::Slider& slider)
 //! [drawRotarySlider]
 {
-  g.setColour(slider.findColour(Slider::trackColourId));
-  // std::Array<Point<float>, 6> start_point;
-  // std::Array<Point<float>, 6> end_point;
-  float fwidth = static_cast<float>(width);
-  float fheight = static_cast<float>(height);
-  float trackWidth = 0.2;
+  auto radius = (float)juce::jmin(width / 2, height / 2) - 10.0f;
+  auto centreX = (float)x + (float)width * 0.5f;
+  auto centreY = (float)y + (float)height * 0.5f;
+  auto rx = centreX - radius;
+  auto ry = centreY - radius;
+  auto rw = radius * 2.0f;
+  auto angle =
+      rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
+  //! [locals]
 
-  // Point<float> start_point[1]= {fwidth/2, fheight};
+  g.setColour(CustomColors::getGradientWithoutGreen(sliderPos));
 
-  // float ratio = sliderPos - 0.5;
-  // ratio *= 20;
-  // float x_offset = 0;
-  // float middle = fwidth / 2;
+  sliderPos /= 1.6;
 
-  // for (int i = 0; i<6; i++){
-  //     juce::Path new_line;
-  //     new_line.startNewSubPath({x_offset + middle, 0});
-  //     new_line.lineTo({x_offset + middle, fheight});
-  //     g.strokePath(new_line, {trackWidth, PathStrokeType::curved,
-  //     PathStrokeType::rounded}); x_offset += ratio * x_offset;
-  // }
+  juce::Path d;
+  d.addRoundedRectangle(0 - width / 20, -height / 2., width / 10, height, 5);
+  d.applyTransform(juce::AffineTransform::rotation(-sliderPos * 2)
+                       .translated(centreX, centreY));
+  //! [pointer]
+  // pointer
+  g.fillPath(d);
+  //! [pointer]
 }

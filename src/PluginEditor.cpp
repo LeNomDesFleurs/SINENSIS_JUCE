@@ -15,6 +15,9 @@ SinensisAudioProcessorEditor::SinensisAudioProcessorEditor(
     : AudioProcessorEditor(&p), audioProcessor(p) {
   apvts = &vts;
 
+  addAndMakeVisible(background_component);
+  background_component.setBufferedToImage(true);
+
   for (auto* comp : getComps()) {
     addAndMakeVisible(comp);
     //   comp.setSliderStyle(juce::Slider::RotaryVerticalDrag);
@@ -30,9 +33,9 @@ SinensisAudioProcessorEditor::SinensisAudioProcessorEditor(
   parametersChanged = false;
   ratio = 0.5;
   band_selector = 0;
-  root_frequency = 100;
+  root_frequency = 0.5;
 
-  setSize(300, 500);
+  setSize(300, 540);
 }
 
 SinensisAudioProcessorEditor::~SinensisAudioProcessorEditor() {
@@ -42,62 +45,55 @@ SinensisAudioProcessorEditor::~SinensisAudioProcessorEditor() {
   }
 }
 
-void SinensisAudioProcessorEditor::paint(juce::Graphics& g) {
+void SinensisAudioProcessorEditor::paintOverChildren(juce::Graphics& g) {
   // if (!background_generated) {
-  g.fillAll(CustomColors::blue);
-  g.setColour(juce::Colours::black);
-  // g.strokePath(generateBackground(300, 500, 10),
-  //              {2, PathStrokeType::curved, PathStrokeType::rounded});
-  background_generated = true;
-  // }
-
-  g.setColour(CustomColors::red);
-  g.setFont(juce::Font("Times New Roman", 60.0f, juce::Font::italic));
-  g.drawFittedText("Sinensis", 0, 0, getWidth(), 80,
-                   juce::Justification::centred, 1);
-  // Title color
-
-  // Rounded rectangles background
-
-  g.setColour(CustomColors::green);
-  // Frequency rectangle
-  g.fillRoundedRectangle(20, 90, 260, 100, 5);
-  // Band Selection rectangle
-  g.fillRoundedRectangle(20, 370, 260, 100, 5);
-
+  if (midi_mode == Sinensis::MidiMode::Off) {
+    drawFrequencyWidget(g);
+  }
   drawBandSelectionWidget(g);
-  drawFrequencyWidget(g);
+
+  const auto svg = Drawable::createFromImageData(BinaryData::NOI_svg,
+                                                 BinaryData::NOI_svgSize);
+
+  // juce::AffineTransform scale = Set::scale(0.2);
+  juce::Rectangle<float> position = {140.f, 495.f, 35.f, 35.f};
+  juce::RectanglePlacement placement = (36);
+  svg->setTransformToFit(position, placement);
+  svg->draw(g, 1.0);
 
   // draw amp
 }
 
 void SinensisAudioProcessorEditor::resized() {
+  background_component.setBounds(0, 0, 300, 540);
   auto bounds = getLocalBounds();
   bounds.reduce(30, 30);
   bounds.removeFromTop(80);
   cutoffFrequencySlider.setBounds(bounds.removeFromTop(80));
   bounds.removeFromTop(20);
 
-  juce::Rectangle<int> buttonBounds = {70, 75, 170, 30};
+  juce::Rectangle<int> buttonBounds = {70, 60, 170, 30};
   int temp_width = buttonBounds.getWidth() / 3;
 
   midiOffButton.setBounds(buttonBounds.removeFromLeft(temp_width));
   midiMonoButton.setBounds(buttonBounds.removeFromLeft(temp_width));
   midiPolyButton.setBounds(buttonBounds.removeFromLeft(temp_width));
 
-  buttonBounds = {25, 355, 250, 30};
-  buttonBounds = {70, 355, 170, 30};
+  // buttonBounds = {25, 355, 250, 30};
+  buttonBounds = {70, 455, 170, 30};
   temp_width = buttonBounds.getWidth() / 3;
 
   lowHighButton.setBounds(buttonBounds.removeFromLeft(temp_width));
   oddEvenButton.setBounds(buttonBounds.removeFromLeft(temp_width));
   peakButton.setBounds(buttonBounds.removeFromLeft(temp_width));
 
-  cutoffFrequencySlider.setBounds(25, 113, 260, 80);
-  QSlider.setBounds(25, 190, 250, 80);
-  BandSelectorSlider.setBounds(30, 380, 250, 83);
-  ratioSlider.setBounds(25, 280, 250, 60);
+  cutoffFrequencySlider.setBounds(20, 90, 260, 80);
+  BandSelectorSlider.setBounds(25, 375, 250, 83);
+  QSlider.setBounds(25, 180, 250, 80);
+  ratioSlider.setBounds(25, 290, 250, 60);
 
+  attackSlider.setBounds(45, 95, 70, 70);
+  decaySlider.setBounds(180, 95, 70, 70);
   // midiMode.setBounds(bounds.removeFromLeft(300));
   // title.setBounds(bounds.removeFromTop(100));
   // bandControl.setBounds(bounds.removeFromRight(600));
@@ -160,10 +156,10 @@ void SinensisAudioProcessorEditor::setSlidersParameters() {
   QSlider.setLookAndFeel(&resonance_look_and_feel);
   ratioSlider.setLookAndFeel(&ratio_look_and_feel);
   // TODO changer quand il sera temps
-  BandSelectorSlider.setLookAndFeel(&band_select_look_and_feel);
-  attackSlider.setLookAndFeel(&envelope_look_and_feel);
-  decaySlider.setLookAndFeel(&envelope_look_and_feel);
-  cutoffFrequencySlider.setLookAndFeel(&envelope_look_and_feel);
+  BandSelectorSlider.setLookAndFeel(&empty_look_and_feel);
+  attackSlider.setLookAndFeel(&attack_look_and_feel);
+  decaySlider.setLookAndFeel(&decay_look_and_feel);
+  cutoffFrequencySlider.setLookAndFeel(&empty_look_and_feel);
 
   QAttachement.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(
       *apvts, "RESONANCE", QSlider));
@@ -188,9 +184,10 @@ void SinensisAudioProcessorEditor::parameterValueChanged(int parameterIndex,
                                                          float newValue) {
   parametersChanged.set(true);
   switch (parameterIndex) {
-    // case 0:
-    //   if (newValue) band_selector_mode = Sinensis::BandMode::LowHigh;
-    //   break;
+    case 0:
+      attackSlider.setVisible(*apvts->getRawParameterValue("BANDMODE"));
+      if (newValue) band_selector_mode = Sinensis::BandMode::LowHigh;
+      break;
     // case 1:
     //   if (newValue) band_selector_mode = Sinensis::BandMode::OddEven;
     //   break;
@@ -208,28 +205,12 @@ void SinensisAudioProcessorEditor::parameterValueChanged(int parameterIndex,
 
 void SinensisAudioProcessorEditor::timerCallback() {
   if (parametersChanged.compareAndSetBool(false, true)) {
+    repaint();
   }
-  repaint();
-}
-
-juce::Path SinensisAudioProcessorEditor::generateBackground(int size_x,
-                                                            int size_y,
-                                                            int block_size) {
-  juce::Path motif;
-  for (int i = 0; i < size_x; i += block_size) {
-    for (int j = 0; j < size_y; j += block_size) {
-      if (true) {
-        GraphicTools::addLine(motif, i + block_size, j, i, j + block_size);
-      } else {
-        GraphicTools::addLine(motif, i, j, i + block_size, j + block_size);
-      }
-    }
-  }
-  return motif;
 }
 
 void SinensisAudioProcessorEditor::drawBandSelectionWidget(Graphics& g) {
-  float marge_basse = 460;
+  float marge_basse = 450;
   float taille = 70;
   float x_position = 50;
   float ecart = 40;
@@ -245,13 +226,14 @@ void SinensisAudioProcessorEditor::drawBandSelectionWidget(Graphics& g) {
     lines_background.lineTo(point_haut);
 
     // draw slider value
-    float y_position = (marge_basse + 1) - ((taille * gains[i]) - 1);
+    // float y_position = (marge_basse + 1) - ((taille * gains[i]) - 1);
+    float y_position = (marge_basse) - ((taille * gains[i]));
     point_haut = {x_position, y_position};
     lines.startNewSubPath(point_bas);
     lines.lineTo(point_haut);
     x_position += ecart;
 
-    g.setColour(juce::Colours::black);
+    g.setColour(CustomColors::black);
     g.strokePath(lines_background,
                  {5, PathStrokeType::curved, PathStrokeType::rounded});
 
@@ -262,6 +244,7 @@ void SinensisAudioProcessorEditor::drawBandSelectionWidget(Graphics& g) {
 
 void SinensisAudioProcessorEditor::updateGains() {
   int band_mode = static_cast<int>(*apvts->getRawParameterValue("BANDMODE"));
+
   switch (band_mode) {
     case 0:
       band_selector_mode = Sinensis::BandMode::OddEven;
@@ -272,6 +255,30 @@ void SinensisAudioProcessorEditor::updateGains() {
     case 2:
       band_selector_mode = Sinensis::BandMode::Peak;
       break;
+  }
+
+  int i_midi_mode = static_cast<int>(*apvts->getRawParameterValue("MIDIMODE"));
+
+  switch (i_midi_mode) {
+    case 0:
+      midi_mode = Sinensis::MidiMode::Off;
+      break;
+    case 1:
+      midi_mode = Sinensis::MidiMode::Mono;
+      break;
+    case 2:
+      midi_mode = Sinensis::MidiMode::Poly;
+      break;
+  }
+
+  if (midi_mode == Sinensis::MidiMode::Off) {
+    attackSlider.setVisible(false);
+    decaySlider.setVisible(false);
+    cutoffFrequencySlider.setVisible(true);
+  } else {
+    attackSlider.setVisible(true);
+    decaySlider.setVisible(true);
+    cutoffFrequencySlider.setVisible(false);
   }
 
   switch (band_selector_mode) {
@@ -342,8 +349,8 @@ void SinensisAudioProcessorEditor::computePeak() {
 
 void SinensisAudioProcessorEditor::drawFrequencyWidget(juce::Graphics& g) {
   float x_position = 28;
-  float y_position = 114;
-  float width = 255;
+  float y_position = 95;
+  float width = 240;
   float height = 70;
   juce::Path lines;
 
@@ -351,7 +358,7 @@ void SinensisAudioProcessorEditor::drawFrequencyWidget(juce::Graphics& g) {
                         y_position, x_position + (width * root_frequency),
                         y_position + height);
 
-  g.setColour(CustomColors::getGradient(root_frequency));
+  g.setColour(CustomColors::getGradientWithoutGreen(root_frequency));
   // g.setColour(CustomColors::red);
   g.strokePath(lines, {5, PathStrokeType::curved, PathStrokeType::rounded});
 }

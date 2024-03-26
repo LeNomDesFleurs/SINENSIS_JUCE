@@ -28,6 +28,18 @@ class OtherLookAndFeel : public juce::LookAndFeel_V4 {
                         bool shouldDrawButtonAsDown) override;
 };
 
+class EmptyLookAndFeel : public juce::LookAndFeel_V4 {
+ public:
+  // OtherLookAndFeel();
+  //! [otherLookAndFeel]
+
+  //! [drawRotarySlider]
+  void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height,
+                        float sliderPos, const float rotaryStartAngle,
+                        const float rotaryEndAngle,
+                        juce::Slider& slider) override;
+};
+
 class RatioLookAndFeel : public juce::LookAndFeel_V4 {
  public:
   // RatioLookAndFeel();
@@ -64,12 +76,20 @@ class BandSelectLookAndFeel : public juce::LookAndFeel_V4 {
                         juce::Slider& slider) override;
 };
 
-class EnvelopeLookAndFeel : public juce::LookAndFeel_V4 {
+class AttackLookAndFeel : public juce::LookAndFeel_V4 {
  public:
   // EnvelopeLookAndFeel();
   //! [otherLookAndFeel]
 
   //! [drawRotarySlider]
+  void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height,
+                        float sliderPos, const float rotaryStartAngle,
+                        const float rotaryEndAngle,
+                        juce::Slider& slider) override;
+};
+
+class DecayLookAndFeel : public juce::LookAndFeel_V4 {
+ public:
   void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height,
                         float sliderPos, const float rotaryStartAngle,
                         const float rotaryEndAngle,

@@ -19,13 +19,14 @@ juce_add_plugin(Sinensis
     COMPANY_WEBSITE "https://lenomdesfleurs.github.io/Blog/"
     COMPANY_EMAIL "Thomasvguillory@gmail.com"
     IS_SYNTH FALSE                       # Is this a synth or an effect?
-    # NEEDS_MIDI_INPUT TRUE/FALSE               # Does the plugin need midi input?
-    # NEEDS_MIDI_OUTPUT TRUE/FALSE              # Does the plugin need midi output?
-    # IS_MIDI_EFFECT TRUE/FALSE                 # Is this plugin a MIDI effect?
+    NEEDS_MIDI_INPUT TRUE               # Does the plugin need midi input?
+    NEEDS_MIDI_OUTPUT FALSE              # Does the plugin need midi output?
+    JUCE_VST_NUM_MIDI_INS 1
+    # IS_MIDI_EFFECT TRUE                # Is this plugin a MIDI effect?
     # EDITOR_WANTS_KEYBOARD_FOCUS TRUE/FALSE    # Does the editor need keyboard focus?
-    # COPY_PLUGIN_AFTER_BUILD TRUE/FALSE        # Should the plugin be installed to a default location after building?
-    PLUGIN_MANUFACTURER_CODE CCCC               # A four-character manufacturer id with at least one upper-case character
-    PLUGIN_CODE XXXX                            # A unique four-character plugin id with at least one upper-case character
+    COPY_PLUGIN_AFTER_BUILD TRUE        # Should the plugin be installed to a default location after building?
+    PLUGIN_MANUFACTURER_CODE Noia               # A four-character manufacturer id with at least one upper-case character
+    PLUGIN_CODE SINS                            # A unique four-character plugin id with at least one upper-case character
     FORMATS 
     # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
             Standalone 
@@ -63,6 +64,7 @@ target_compile_definitions(Sinensis
 juce_add_binary_data(JuceLogoBinary
 SOURCES 
 ${CMAKE_SOURCE_DIR}/assets/juce-logo.svg
+${CMAKE_SOURCE_DIR}/assets/NOI.svg
 )
 
 file(GLOB_RECURSE SourceFiles CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp") #"${CMAKE_CURRENT_SOURCE_DIR}/*.h")

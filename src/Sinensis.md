@@ -1,15 +1,24 @@
 # Sinensis
 
+-   [ ] limit band control widget refresh to certain parameter
+-   [ ] Make ratio and band control inactive in poly mode
+
 -   [ ] Frequency widget
--   [ ] Q widget
--   [ ] Ratio widget
--   [ ] Band widget
--   [ ] Buffer le background
--   [ ] Ajouter slider attack/decay
+-   [ ] Get into the [codebase of the tutorial](https://github.com/matkatmusic/SimpleEQ/tree/master/Source)
+-   [ ] charte d'épaisseur des traits ?
+
+-   [x] ~~Ajouter slider attack/decay~~
+-   [x] ~~Y'a un truc bizarre qui se repaint sur le cutoff, je me demande si c'est pas le widget~~
+-   [x] ~~Band widget~~
+-   [x] use the mode function to set parameters active or not ifelse in the OFF mode
+-   [x] ~~set slider in the default rotary mode~~
+-   [x] ~~Q widget~~
+-   [x] ~~Ratio widget~~
+-   [x] ~~Buffer le background~~
 -   [x] ~~use an enum instead of multiple true false for mode~~
 -   [x] ~~Clean the ui header mess~~
--   [ ] replacer tout les widgets dans les bounds
--   [ ] charte d'épaisseur des traits ?
+-   [x] ~~replacer tout les widgets dans les bounds~~
+-   [x] ~~Midi doesn't work~~
 -   [x] ~~passer certain slider en horizontal drag ? (y'avais pas un mode avec les deux)~~
 
 ## Remplacer les modes par des Enum
@@ -38,15 +47,15 @@ Assez simple, deux courbe quatratic qui se font face avec les points de contrôl
 
 ## Ratio widget
 
--   [ ] calibrer les offsets pour éviter le clipping
+-   [x] ~~calibrer les offsets pour éviter le clipping~~
 
 Placer un centre, ajouter ou soustraire en fonction du ratio
 utilisation d'une variable bipolaire pour rendre plus facile la suite du travail
 
 ## Band Widget
 
--   [ ] offset, ne se remplit jamais complètement
--   [ ] réduire l'opacité du background des sliders
+-   [x] ~~offset, ne se remplit jamais complètement~~
+-   [x] ~~réduire l'opacité du background des sliders~~
 -   [x] ~~Utiliser un gradient sur les sliders en fonction du type de mode~~
 -   [x] ~~plus simple -> couleur en fontion du gain, trouver une interpolation qui fait sens (rouge -> vert fait un dégradé grisouille moche)~~
 -   [x] ~~O|E instead of Odd Even and L|H to save size ?~~
@@ -57,16 +66,20 @@ Obligé de le faire sur le resize ? J'ai besoin de la valeur du bandMode...
 
 -   [x] ~~Root Freq~~
 -   [ ] Other bands freq and gain
--   [ ] Midi Mono Root freq
--   [ ] Midi Poly Root Freq
+-   [x] ~~Midi Mono Root freq~~
+-   [x] ~~Midi Poly Root Freq~~
 
 Pareil, je vais probablement devoir le faire en paint, faire un slider vide sur le visuel ?
 Donc potentiellement Band et Frequency seraient juste des slider vide
 
 ## Attack / Decay
 
--   [ ] setVisible(false) pour le slider de fréquence
--   [ ] inspiration slate and ash ?
+-   [x] ~~setVisible(false) pour le slider de fréquence~~
+-   [x] ~~inspiration slate and ash ?~~
+-   [x] ~~ajouter des bord ronds~~
+-   [x] ~~placer correctement~~
+
+Go get the drawing function of the variation on hellebore, the rotate transform etc...
 
 ## Bug Editor constructor not recognized
 
@@ -104,7 +117,7 @@ rounded_rectangle.addRoundedRectangle(
 
 Beaucoup plus simple :
 
-````cpp
+```cpp
 g.fillRoundedRectangle(x, y, width, height, corner size);
 ```
 
@@ -117,4 +130,13 @@ Avec des borne qui ne s'active que la première fois, ça ne marche pas, je supp
 [Ce thread](https://forum.juce.com/t/ive-asked-this-before-but-nobody-seemed-to-know-the-answer-i-have-a-component-that-draws-a-vertical-line-playhead-but-it-calls-repaint-on-the-parent-i-just-want-to-draw-the-line/31913/2) mentionne `setBufferToImage()`, [documentation ici](https://docs.juce.com/develop/classComponent.html#af19bbc2186e3297ddd55c328e46c014b).
 
 De ce qu'il me semble comprendre, il faut faire un component et appeler sur lui `setBufferedToImage(true)`.
-````
+
+## update visibility of component depending on mode
+
+Use [setVisible()](https://docs.juce.com/develop/classComponent.html#ac8483af6fe4dc3254e7176df0d8e9f7a)
+In the parameter callback.
+Radio button problem -> Can't get the right ID, use the apvt for now ?
+
+## flag to set in the cmake /src
+
+`NEEDS_MIDI_INPUT TRUE` aussi une histoire de nombre de canal midi que je n'ai pas encore réussi à résoudre , j'ai essayé `JUCE_VST_NUM_MIDI_INS 1` qui n'a pas fonctionné.

@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 
+#include "BackgroundComponent.hpp"
 #include "CustomColors.hpp"
 #include "GraphicTools.hpp"
 #include "LookAndFeel.hpp"
@@ -32,7 +33,7 @@ class SinensisAudioProcessorEditor
   ~SinensisAudioProcessorEditor() override;
 
   //==============================================================================
-  void paint(juce::Graphics&) override;
+  //   void paint(juce::Graphics&) override;
   void resized() override;
   void parameterValueChanged(int parameterIndex, float newvalue) override;
   void parameterGestureChanged(int parameterIndex,
@@ -53,20 +54,22 @@ class SinensisAudioProcessorEditor
   void computeLowHigh();
   void computeOddEven();
   void computePeak();
+  void paintOverChildren(juce::Graphics&) override;
 
  private:
   OtherLookAndFeel otherLookAndFeel;  // [2]
   RatioLookAndFeel ratio_look_and_feel;
   ResonanceLookAndFeel resonance_look_and_feel;
-  BandSelectLookAndFeel band_select_look_and_feel;
-  EnvelopeLookAndFeel envelope_look_and_feel;
+  AttackLookAndFeel attack_look_and_feel;
+  DecayLookAndFeel decay_look_and_feel;
+  EmptyLookAndFeel empty_look_and_feel;
 
   SinensisAudioProcessor& audioProcessor;
 
   AudioProcessorValueTreeState* apvts;
 
   // Background
-  //   juce::Component background;
+  BackgroundComponent background_component;
 
   // SLIDER
 
@@ -90,8 +93,6 @@ class SinensisAudioProcessorEditor
       midiPolyButtonAttachement;
 
   juce::Slider outputVolumeSlider;
-  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>
-      outputVolumeAttachement;
 
   std::unique_ptr<RadioButtonAttachment> midi_modes_radio_group;
   std::unique_ptr<RadioButtonAttachment> band_modes_radio_group;
@@ -103,6 +104,7 @@ class SinensisAudioProcessorEditor
   bool background_generated = false;
   std::array<float, 6> gains;
   Sinensis::BandMode band_selector_mode;
+  Sinensis::MidiMode midi_mode;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SinensisAudioProcessorEditor)
-  };
+};
