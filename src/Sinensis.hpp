@@ -53,7 +53,7 @@ class MonoMidiNote {
 class Sinensis {
  public:
   enum MidiMode { Off, Mono, Poly };
-  enum BandMode { OddEven, LowHigh, Peak };
+  enum BandMode { LowHigh, OddEven, Peak };
   ///< summary> Parameters of Sinensis </summary>
   /// <param name = "frequency"> </param>
   /// @param float Q

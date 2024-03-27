@@ -176,15 +176,17 @@ SinensisAudioProcessor::createParams() {
 
   params.push_back(std::make_unique<juce::AudioParameterFloat>(
       "root_frequency", "Root Frequency",
-      juce::NormalisableRange{20.f, 20000.f, 0.1f, 0.2f, false}, 500.f)),
+      juce::NormalisableRange{20.f, 15000.f, 0.1f, 0.2f, false}, 500.f)),
+
       params.push_back(std::make_unique<juce::AudioParameterFloat>(
           "RATIO", "Ratio", juce::NormalisableRange{0.5f, 2.0f, 0.001f}, 1.5f));
+
   params.push_back(std::make_unique<juce::AudioParameterFloat>(
       "RESONANCE", "Resonance", juce::NormalisableRange{0.7f, 35.0f, 0.1f},
       20.0f));
   params.push_back(std::make_unique<juce::AudioParameterFloat>(
       "band_selector", "Number Of Band",
-      juce::NormalisableRange{0.0f, 1.0f, 0.01f}, 0.0f));
+      juce::NormalisableRange{0.0f, 1.0f, 0.01f}, 0.3f));
   params.push_back(std::make_unique<juce::AudioParameterFloat>(
       "OUTPUTVOLUME", "Ouput Volume",
       juce::NormalisableRange{0.0f, 2.0f, 0.01f}, 0.6f));
@@ -196,35 +198,10 @@ SinensisAudioProcessor::createParams() {
       "DECAY", "Decay", juce::NormalisableRange<float>{0.1f, 3.0f, 0.1f},
       0.4f));
 
-  params.push_back(std::make_unique<AudioParameterChoice>(
-      "MIDIMODE", "Midi Mode", StringArray{"Off", "Mono", "Poly"}, 0));
-  // params.push_back(std::make_unique<juce::AudioParameterBool>("MIDIOFF",
-  // "Midi Off", true));
-  // params.push_back(std::make_unique<juce::AudioParameterBool>("MIDIMONO",
-  // "Midi Mono", false));
-  // params.push_back(std::make_unique<juce::AudioParameterBool>("MIDIPOLY",
-  // "Midi Poly", false));
-
-  params.push_back(std::make_unique<AudioParameterChoice>(
-      "BANDMODE", "Band Mode", StringArray{"Low / High", "Odd / Even", "Peak"},
-      0));
-
-  // params.push_back(std::make_unique<juce::AudioParameterBool>("LOWHIGH", "Low
-  // / High", true));
-  // params.push_back(std::make_unique<juce::AudioParameterBool>("ODDEVEN", "Odd
-  // / even", false));
-  // params.push_back(std::make_unique<juce::AudioParameterBool>("PEAK", "Peak",
-  // false));
-
   return {params.begin(), params.end()};
 }
 
 void SinensisAudioProcessor::setParam() {
-  // MODE
-  //  if (*parameters.getRawParameterValue("MIDIMONO"))
-  //  sinensis_parameters.midi_mode = 1; else if
-  //  (*parameters.getRawParameterValue("MIDIPOLY"))
-  //  sinensis_parameters.midi_mode = 2; else sinensis_parameters.midi_mode = 0;
   int midi_mode =
       static_cast<float>(*parameters.getRawParameterValue("MIDIMODE"));
   switch (midi_mode) {
@@ -242,10 +219,10 @@ void SinensisAudioProcessor::setParam() {
       static_cast<float>(*parameters.getRawParameterValue("BANDMODE"));
   switch (band_mode) {
     case 0:
-      sinensis_parameters.band_selector_mode = Sinensis::BandMode::OddEven;
+      sinensis_parameters.band_selector_mode = Sinensis::BandMode::LowHigh;
       break;
     case 1:
-      sinensis_parameters.band_selector_mode = Sinensis::BandMode::LowHigh;
+      sinensis_parameters.band_selector_mode = Sinensis::BandMode::OddEven;
       break;
     case 2:
       sinensis_parameters.band_selector_mode = Sinensis::BandMode::Peak;

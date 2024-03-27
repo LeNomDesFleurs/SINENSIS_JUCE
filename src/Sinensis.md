@@ -2,8 +2,10 @@
 
 -   [ ] limit band control widget refresh to certain parameter
 -   [ ] Make ratio and band control inactive in poly mode
+-   [ ] Comment set les défauts ? l'ui commence toujours en Odd/even bizarrement
+-   [-] ~~envoyer pounter vers objet sinensis à l'éditeur, avoir une version locale de l'objet, comparer et copier~~
 
--   [ ] Frequency widget
+-   [x] ~~Frequency widget~~
 -   [ ] Get into the [codebase of the tutorial](https://github.com/matkatmusic/SimpleEQ/tree/master/Source)
 -   [ ] charte d'épaisseur des traits ?
 

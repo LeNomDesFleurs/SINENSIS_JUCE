@@ -55,6 +55,7 @@ class SinensisAudioProcessorEditor
   void computeOddEven();
   void computePeak();
   void paintOverChildren(juce::Graphics&) override;
+  void computeFrequencyMidiOff();
 
  private:
   OtherLookAndFeel otherLookAndFeel;  // [2]
@@ -102,8 +103,9 @@ class SinensisAudioProcessorEditor
   float band_selector;
   float root_frequency;
   bool background_generated = false;
+  float m_frequency[6];
   std::array<float, 6> gains;
-  Sinensis::BandMode band_selector_mode;
+  Sinensis::BandMode band_selector_mode = Sinensis::BandMode::LowHigh;
   Sinensis::MidiMode midi_mode;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SinensisAudioProcessorEditor)

@@ -71,7 +71,7 @@ class SinensisAudioProcessor : public juce::AudioProcessor
                                            Sinensis::BandMode::LowHigh,
                                            218.f,
                                            0.707f,
-                                           0.f,
+                                           0.5f,
                                            1.5f,
                                            0.4f,
                                            0.4f,

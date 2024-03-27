@@ -31,9 +31,10 @@ SinensisAudioProcessorEditor::SinensisAudioProcessorEditor(
   startTimerHz(30);
 
   parametersChanged = false;
-  ratio = 0.5;
-  band_selector = 0;
+  ratio = 1.5;
+  band_selector = 0.3;
   root_frequency = 0.5;
+  band_selector_mode = Sinensis::BandMode::LowHigh;
 
   setSize(300, 540);
 }
@@ -185,11 +186,8 @@ void SinensisAudioProcessorEditor::parameterValueChanged(int parameterIndex,
   parametersChanged.set(true);
   switch (parameterIndex) {
     case 0:
-      attackSlider.setVisible(*apvts->getRawParameterValue("BANDMODE"));
-      if (newValue) band_selector_mode = Sinensis::BandMode::LowHigh;
       break;
     // case 1:
-    //   if (newValue) band_selector_mode = Sinensis::BandMode::OddEven;
     //   break;
     case 2:
       root_frequency = newValue;
@@ -197,8 +195,8 @@ void SinensisAudioProcessorEditor::parameterValueChanged(int parameterIndex,
     case 5:
       band_selector = newValue;
       break;
-    case 4:
-      // root_frequency = newValue;
+    case 3:
+      ratio = (newValue * 1.5) + 0.5;
       break;
   }
 }
@@ -247,10 +245,10 @@ void SinensisAudioProcessorEditor::updateGains() {
 
   switch (band_mode) {
     case 0:
-      band_selector_mode = Sinensis::BandMode::OddEven;
+      band_selector_mode = Sinensis::BandMode::LowHigh;
       break;
     case 1:
-      band_selector_mode = Sinensis::BandMode::LowHigh;
+      band_selector_mode = Sinensis::BandMode::OddEven;
       break;
     case 2:
       band_selector_mode = Sinensis::BandMode::Peak;
@@ -348,17 +346,51 @@ void SinensisAudioProcessorEditor::computePeak() {
 }
 
 void SinensisAudioProcessorEditor::drawFrequencyWidget(juce::Graphics& g) {
+  computeFrequencyMidiOff();
+
   float x_position = 28;
   float y_position = 95;
   float width = 240;
   float height = 70;
-  juce::Path lines;
+  juce::Path main_line;
+  g.setColour(CustomColors::getGradient(gains[0]));
 
-  GraphicTools::addLine(lines, x_position + (width * root_frequency),
-                        y_position, x_position + (width * root_frequency),
+  GraphicTools::addLine(main_line, x_position + (width * m_frequency[0]),
+                        y_position, x_position + (width * m_frequency[0]),
                         y_position + height);
 
-  g.setColour(CustomColors::getGradientWithoutGreen(root_frequency));
-  // g.setColour(CustomColors::red);
-  g.strokePath(lines, {5, PathStrokeType::curved, PathStrokeType::rounded});
+  g.strokePath(main_line, {5, PathStrokeType::curved, PathStrokeType::rounded});
+
+  for (int i = 1; i < 6; i++) {
+    juce::Path other_bands;
+    GraphicTools::addLine(other_bands, x_position + (width * m_frequency[i]),
+                          y_position, x_position + (width * m_frequency[i]),
+                          y_position + height);
+    g.setColour(CustomColors::getGradient(gains[i]));
+    // g.setColour(CustomColors::red);
+    g.strokePath(other_bands,
+                 {2, PathStrokeType::curved, PathStrokeType::rounded});
+  }
+}
+
+void SinensisAudioProcessorEditor::computeFrequencyMidiOff() {
+  for (int i = 0; i < 6; i++) {
+    // multiply frequence by ratio
+
+    float thisBandFreq = *apvts->getRawParameterValue("root_frequency");
+    for (int j = 1; j <= i; j++) {
+      thisBandFreq *= ratio;
+    }
+    thisBandFreq = truncf(thisBandFreq);
+    // frequency folding
+    while (thisBandFreq > 15000.f || thisBandFreq < 30.f) {
+      if (thisBandFreq > 15000.F) {
+        thisBandFreq = 15000.f - (thisBandFreq - 15000.f);
+      }
+      if (thisBandFreq < 30.f) {
+        thisBandFreq = 30.f + (30.f - thisBandFreq);
+      }
+    }
+    m_frequency[i] = std::pow((thisBandFreq - 30) / 14970., 0.5);
+  }
 }
