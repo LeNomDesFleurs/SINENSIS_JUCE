@@ -182,7 +182,7 @@ SinensisAudioProcessor::createParams() {
           "RATIO", "Ratio", juce::NormalisableRange{0.5f, 2.0f, 0.001f}, 1.5f));
 
   params.push_back(std::make_unique<juce::AudioParameterFloat>(
-      "RESONANCE", "Resonance", juce::NormalisableRange{0.7f, 35.0f, 0.1f},
+      "RESONANCE", "Resonance", juce::NormalisableRange{0.7f, 100.0f, 0.1f},
       20.0f));
   params.push_back(std::make_unique<juce::AudioParameterFloat>(
       "band_selector", "Number Of Band",

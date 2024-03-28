@@ -2,7 +2,6 @@
 
 void BackgroundComponent::paint(juce::Graphics& g) {
   g.fillAll(CustomColors::blue);
-
   g.setColour(CustomColors::black);
   juce::Path motif = paintMotif(300, 540, 10);
   g.strokePath(motif, {0.5, PathStrokeType::curved, PathStrokeType::rounded});

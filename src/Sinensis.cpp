@@ -7,8 +7,27 @@
 
   ==============================================================================
 */
-
 #include "Sinensis.hpp"
+
+// const float equal_temperament_frequencies[120] = {
+//     16.351,    17.324,    18.354,   19.445,    20.601,    21.827,   23.124,
+//     24.499,    25.956,    27.5,     29.135,    30.868,    32.703,   34.648,
+//     36.708,    38.891,    41.203,   43.654,    46.249,    48.999,   51.913,
+//     55,        58.27,     61.735,   65.406,    69.296,    73.416,   77.782,
+//     82.407,    87.307,    92.499,   97.999,    103.826,   110,      116.541,
+//     123.471,   130.813,   138.591,  146.832,   155.563,   164.814,  174.614,
+//     184.997,   195.998,   207.652,  220,       233.082,   246.942,  261.626,
+//     277.183,   293.665,   311.127,  329.628,   349.228,   369.994,  391.995,
+//     415.305,   440,       466.164,  493.883,   523.251,   554.365,  587.33,
+//     622.254,   659.255,   698.456,  739.989,   783.991,   830.609,  880,
+//     932.328,   987.767,   1046.502, 1108.731,  1174.659,  1244.508, 1318.51,
+//     1396.913,  1479.978,  1567.982, 1661.219,  1760,      1864.655, 1975.533,
+//     2093.005,  2217.461,  2349.318, 2489.016,  2637.021,  2793.826, 2959.955,
+//     3135.964,  3322.438,  3520,     3729.31,   3951.066,  4186.009, 4434.922,
+//     4698.636,  4978.032,  5274.042, 5587.652,  5919.91,   6271.928, 6644.876,
+//     7040,      7458.62,   7902.132, 8372.018,  8869.844,  9397.272, 9956.064,
+//     10548.084, 11175.304, 11839.82, 12543.856, 13289.752, 14080,    14917.24,
+//     15804.264};
 
 Sinensis::Sinensis() {
   m_parameters = {Sinensis::MidiMode::Off,
@@ -57,20 +76,25 @@ float Sinensis::processSinensis(float input, juce::MidiBuffer& midi_buffer) {
   return processSample(input);
 }
 
-void Sinensis::attenuate(float& input) { input *= m_parameters.output_volume; }
+void Sinensis::attenuate(float& input) {
+  input *= m_parameters.output_volume;
+  input *= 0.9;
+  input *= 1 - (pow(m_parameters.resonance / 100, 0.5) / 1.5);
+}
 
 void Sinensis::saturate(float& input) {
   float max = 1.f;
-  float threshold = 0.9;
-  if ((input < -threshold && m_saturation_memory < -threshold) ||
-      (input > threshold && m_saturation_memory > threshold)) {
-    float slope =
-        input - m_saturation_memory;  // one sample period as unity time
-    float offset = input < 0.f ? -threshold : threshold;
-    slope *= 1.f - ((m_saturation_memory + offset) *
-                    10.f);  // higher input higher divider
-    input = m_saturation_memory + slope;
-  }
+  // float threshold = 0.9;
+  // if ((input < -threshold && m_saturation_memory < -threshold) ||
+  //     (input > threshold && m_saturation_memory > threshold)) {
+  //   float slope =
+  //       input - m_saturation_memory;  // one sample period as unity time
+  //   float offset = input < 0.f ? -threshold : threshold;
+  //   slope *= 1.f - ((m_saturation_memory + offset) *
+  //                   10.f);  // higher input higher divider
+  //   input = m_saturation_memory + slope;
+  // }
+  input = pow(input, 1. / 2.);
   // additionnal clipping
   if (input < -max) input = -max;
   if (input > max) input = max;

@@ -120,7 +120,7 @@ void RatioLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y,
     bipolar_slider_pos = 1 - bipolar_slider_pos;
   } else {
     bipolar_slider_pos = sliderPos - (1. / 3.);
-    bipolar_slider_pos *= (1 + 1. / 3.);
+    bipolar_slider_pos *= (1 + (1. / 1.7));
   }
 
   float middle = fwidth / 2.f;
@@ -130,7 +130,7 @@ void RatioLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y,
 
   float ratio = sliderPos * 2;
 
-  GraphicTools::addLine(lines, middle, 0, middle, fheight);
+  GraphicTools::addLine(lines, middle, 5, middle, fheight);
 
   float x_position = middle;
   for (int i = 0; i < 5; i++) {

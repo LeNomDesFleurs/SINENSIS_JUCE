@@ -57,7 +57,7 @@ void SinensisAudioProcessorEditor::paintOverChildren(juce::Graphics& g) {
                                                  BinaryData::NOI_svgSize);
 
   // juce::AffineTransform scale = Set::scale(0.2);
-  juce::Rectangle<float> position = {140.f, 495.f, 35.f, 35.f};
+  juce::Rectangle<float> position = {150.f - 36 / 2, 495.f, 36.f, 36.f};
   juce::RectanglePlacement placement = (36);
   svg->setTransformToFit(position, placement);
   svg->draw(g, 1.0);
@@ -81,7 +81,7 @@ void SinensisAudioProcessorEditor::resized() {
   midiPolyButton.setBounds(buttonBounds.removeFromLeft(temp_width));
 
   // buttonBounds = {25, 355, 250, 30};
-  buttonBounds = {70, 455, 170, 30};
+  buttonBounds = {65, 455, 170, 30};
   temp_width = buttonBounds.getWidth() / 3;
 
   lowHighButton.setBounds(buttonBounds.removeFromLeft(temp_width));
@@ -91,7 +91,7 @@ void SinensisAudioProcessorEditor::resized() {
   cutoffFrequencySlider.setBounds(20, 90, 260, 80);
   BandSelectorSlider.setBounds(25, 375, 250, 83);
   QSlider.setBounds(25, 180, 250, 80);
-  ratioSlider.setBounds(25, 290, 250, 60);
+  ratioSlider.setBounds(25, 280, 250, 70);
 
   attackSlider.setBounds(45, 95, 70, 70);
   decaySlider.setBounds(180, 95, 70, 70);
@@ -137,8 +137,8 @@ void SinensisAudioProcessorEditor::setButtonParameters() {
   midi_modes_buttons.add(&midiPolyButton);
 
   juce::Array<juce::Button*> band_modes_buttons;
-  band_modes_buttons.add(&oddEvenButton);
   band_modes_buttons.add(&lowHighButton);
+  band_modes_buttons.add(&oddEvenButton);
   band_modes_buttons.add(&peakButton);
 
   midi_modes_radio_group = std::make_unique<RadioButtonAttachment>(

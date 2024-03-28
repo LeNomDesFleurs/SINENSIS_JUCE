@@ -4,6 +4,9 @@
 -   [ ] Make ratio and band control inactive in poly mode
 -   [ ] Comment set les défauts ? l'ui commence toujours en Odd/even bizarrement
 -   [-] ~~envoyer pounter vers objet sinensis à l'éditeur, avoir une version locale de l'objet, comparer et copier~~
+-   [ ] ajouter un mode pour lock les notes ?
+-   [ ] ajouter des modes de gammes ? Sinensis v2 ?
+-   [ ] ajouter une polyphonie illimité en midi poly ?
 
 -   [x] ~~Frequency widget~~
 -   [ ] Get into the [codebase of the tutorial](https://github.com/matkatmusic/SimpleEQ/tree/master/Source)
