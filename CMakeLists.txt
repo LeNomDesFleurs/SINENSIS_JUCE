@@ -14,3 +14,5 @@ endif()
 add_subdirectory(lib/JUCE)
 
 add_subdirectory(src)
+
+# /opt/homebrew/bin/cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/clang -DCMAKE_CXX_COMPILER:FILEPATH=/usr/bin/clang++ -S/Users/thomas/PROJETS/JUCE_SINENSIS -B/Users/thomas/PROJETS/JUCE_SINENSIS/build -G Ninja
