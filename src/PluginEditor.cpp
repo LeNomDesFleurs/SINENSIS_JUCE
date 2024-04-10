@@ -66,7 +66,7 @@ void SinensisAudioProcessorEditor::paintOverChildren(juce::Graphics& g) {
 }
 
 void SinensisAudioProcessorEditor::resized() {
-  background_component.setBounds(0, 0, 300, 540);
+  background_component.setBounds(getBounds());
   auto bounds = getLocalBounds();
   bounds.reduce(30, 30);
   bounds.removeFromTop(80);
@@ -81,7 +81,7 @@ void SinensisAudioProcessorEditor::resized() {
   midiPolyButton.setBounds(buttonBounds.removeFromLeft(temp_width));
 
   // buttonBounds = {25, 355, 250, 30};
-  buttonBounds = {65, 455, 170, 30};
+  buttonBounds = {65, 540, 170, 30};
   temp_width = buttonBounds.getWidth() / 3;
 
   lowHighButton.setBounds(buttonBounds.removeFromLeft(temp_width));
@@ -89,34 +89,33 @@ void SinensisAudioProcessorEditor::resized() {
   peakButton.setBounds(buttonBounds.removeFromLeft(temp_width));
 
   cutoffFrequencySlider.setBounds(20, 90, 260, 80);
-  BandSelectorSlider.setBounds(25, 375, 250, 83);
-  QSlider.setBounds(25, 180, 250, 80);
-  ratioSlider.setBounds(25, 280, 250, 70);
-
+  QSlider.setBounds(25, 270, 250, 80);
+  ratioSlider.setBounds(25, 370, 250, 70);
+  BandSelectorSlider.setBounds(25, 475, 250, 83);
   attackSlider.setBounds(45, 95, 70, 70);
   decaySlider.setBounds(180, 95, 70, 70);
 
-  float button_width = 10;
-  float button_height = 20;
-  float x_position = 45;
-  float y_position = 600;
+  float button_width = 20;
+  float button_height = 30;
+  float x_position = 80;
+  float y_position = 225;
   cButton.setBounds(x_position, y_position, button_width, button_height);
   x_position += button_width;
-  cSharpButton.setBounds(x_position, y_position-button_height, button_width, button_height);
+  cSharpButton.setBounds(x_position-(button_width/2), y_position-button_height, button_width, button_height);
   dButton.setBounds(x_position, y_position, button_width, button_height);
   x_position += button_width;
-  dSharpButton.setBounds(x_position, y_position-button_height, button_width, button_height);
+  dSharpButton.setBounds(x_position-(button_width/2), y_position-button_height, button_width, button_height);
   eButton.setBounds(x_position, y_position, button_width, button_height);
   x_position += button_width;
   fButton.setBounds(x_position, y_position, button_width, button_height);
   x_position += button_width;
-  fSharpButton.setBounds(x_position, y_position-button_height, button_width, button_height);
+  fSharpButton.setBounds(x_position-(button_width/2), y_position-button_height, button_width, button_height);
   gButton.setBounds(x_position, y_position, button_width, button_height);
   x_position += button_width;
-  gSharpButton.setBounds(x_position, y_position-button_height, button_width, button_height);
+  gSharpButton.setBounds(x_position-(button_width/2), y_position-button_height, button_width, button_height);
   aButton.setBounds(x_position, y_position, button_width, button_height);
   x_position += button_width;
-  aSharpButton.setBounds(x_position, y_position-button_height, button_width, button_height);
+  aSharpButton.setBounds(x_position-(button_width/2), y_position-button_height, button_width, button_height);
   bButton.setBounds(x_position, y_position, button_width, button_height);
   // midiMode.setBounds(bounds.removeFromLeft(300));
   // title.setBounds(bounds.removeFromTop(100));
@@ -228,18 +227,24 @@ bButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachmen
 
 void SinensisAudioProcessorEditor::setSlidersParameters() {
   for (auto* slider : getSliderComps()) {
-    slider->setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+    // slider->setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
     slider->setTextBoxStyle(juce::Slider::NoTextBox, false, 0,
                             slider->getTextBoxHeight());
   }
 
   QSlider.setLookAndFeel(&resonance_look_and_feel);
+  QSlider.setSliderStyle(juce::Slider::RotaryVerticalDrag);
   ratioSlider.setLookAndFeel(&ratio_look_and_feel);
+  ratioSlider.setSliderStyle(juce::Slider::RotaryHorizontalDrag);
   // TODO changer quand il sera temps
   BandSelectorSlider.setLookAndFeel(&empty_look_and_feel);
+  BandSelectorSlider.setSliderStyle(juce::Slider::RotaryHorizontalDrag);
   attackSlider.setLookAndFeel(&attack_look_and_feel);
+  attackSlider.setSliderStyle(juce::Slider::RotaryVerticalDrag);
   decaySlider.setLookAndFeel(&decay_look_and_feel);
+  decaySlider.setSliderStyle(juce::Slider::RotaryVerticalDrag);
   cutoffFrequencySlider.setLookAndFeel(&empty_look_and_feel);
+  cutoffFrequencySlider.setSliderStyle(juce::Slider::RotaryHorizontalDrag);
 
   QAttachement.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(
       *apvts, "RESONANCE", QSlider));
@@ -287,7 +292,7 @@ void SinensisAudioProcessorEditor::timerCallback() {
 }
 
 void SinensisAudioProcessorEditor::drawBandSelectionWidget(Graphics& g) {
-  float marge_basse = 450;
+  float marge_basse = 535;
   float taille = 70;
   float x_position = 50;
   float ecart = 40;

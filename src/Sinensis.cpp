@@ -154,8 +154,10 @@ void Sinensis::computeFrequencyMidiOff() {
 
     bool note_lock_on = false;
     //check for note lock
-    for (int j; j < 12; j++) {
-      note_lock_on = m_parameters.note_lock[j]?true:false;
+    int j = 0;
+    while (j<12 && !note_lock_on){
+        note_lock_on = m_parameters.note_lock[j] ? true : false;
+        j++;
     }
     //if not lock, skim through all frequencies until one is superior to actual frequency
     if (note_lock_on) {

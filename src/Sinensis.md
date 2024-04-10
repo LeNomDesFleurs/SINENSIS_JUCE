@@ -2,8 +2,6 @@
 
 ## UI
 
--   [ ] piano widget pour lock note
--   [ ] widget horizontal / vertical
 -   [ ] charte d'épaisseur des traits ?
 
 ## Functionality
@@ -11,7 +9,6 @@
 -   [ ] changer la courbe de la root frequency
 -   [ ] Rework poly mode to allow 6x6 filter band
 -   [ ] Lock note
--   [ ] Comment set les défauts ? l'ui commence toujours en Odd/even bizarrement
 -   [ ] Rework to resonance gain attenuation to feel the volume increase
 -   [ ] Q->0 = Dry signal
 -   [ ] pitch wheel
@@ -26,6 +23,9 @@
 
 ## Dump
 
+-   [x] piano widget pour lock note
+-   [x] widget horizontal / vertical
+-   [x] ~~Comment set les défauts ? l'ui commence toujours en Odd/even bizarrement~~
 -   [-] ~~envoyer pounter vers objet sinensis à l'éditeur, avoir une version locale de l'objet, comparer et copier~~
 -   [-] ~~Make ratio and band control inactive in poly mode~~
 -   [x] ~~Frequency widget~~
@@ -166,4 +166,6 @@ j'ai essayé `JUCE_VST_NUM_MIDI_INS 1` qui n'a pas fonctionné.
 
 ## note lock
 
-- [ ] add buttons
+- [x] add buttons
+- [ ] update frequency band UI function
+- [ ] button 

@@ -93,6 +93,7 @@ class SinensisAudioProcessorEditor
       midiOffButtonAttachement, midiMonoButtonAttachement,
       midiPolyButtonAttachement;
 
+
   juce::ToggleButton cButton{""}, cSharpButton{""}, dButton{""},
       dSharpButton{""}, eButton{""}, fButton{""}, fSharpButton{""}, gButton{""},
       gSharpButton{""}, aButton{""}, aSharpButton{""}, bButton{""};

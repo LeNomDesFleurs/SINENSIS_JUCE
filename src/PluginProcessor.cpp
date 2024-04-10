@@ -260,18 +260,18 @@ void SinensisAudioProcessor::setParam() {
   sinensis_parameters.attack = *parameters.getRawParameterValue("ATTACK");
   sinensis_parameters.decay = *parameters.getRawParameterValue("DECAY");
 
-  sinensis_parameters.note_lock[0]=*parameters.getRawParameterValue("C");
-  sinensis_parameters.note_lock[1]=*parameters.getRawParameterValue("CSHARP");
-  sinensis_parameters.note_lock[2]=*parameters.getRawParameterValue("D");
-  sinensis_parameters.note_lock[3]=*parameters.getRawParameterValue("DSHARP");
-  sinensis_parameters.note_lock[4]=*parameters.getRawParameterValue("E");
-  sinensis_parameters.note_lock[5]=*parameters.getRawParameterValue("F");
-  sinensis_parameters.note_lock[6]=*parameters.getRawParameterValue("FSHARP");
-  sinensis_parameters.note_lock[7]=*parameters.getRawParameterValue("G");
-  sinensis_parameters.note_lock[8]=*parameters.getRawParameterValue("GSHARP");
-  sinensis_parameters.note_lock[9]=*parameters.getRawParameterValue("A");
-  sinensis_parameters.note_lock[10]=*parameters.getRawParameterValue("ASHARP");
-  sinensis_parameters.note_lock[11]=*parameters.getRawParameterValue("B");
+  sinensis_parameters.note_lock[0]= *parameters.getRawParameterValue("C")>0.5;
+  sinensis_parameters.note_lock[1]= *parameters.getRawParameterValue("CSHARP")>0.5;
+  sinensis_parameters.note_lock[2]= *parameters.getRawParameterValue("D")>0.5;
+  sinensis_parameters.note_lock[3]= *parameters.getRawParameterValue("DSHARP")>0.5;
+  sinensis_parameters.note_lock[4]= *parameters.getRawParameterValue("E")>0.5;
+  sinensis_parameters.note_lock[5]= *parameters.getRawParameterValue("F")>0.5;
+  sinensis_parameters.note_lock[6]= *parameters.getRawParameterValue("FSHARP")>0.5;
+  sinensis_parameters.note_lock[7]= *parameters.getRawParameterValue("G")>0.5;
+  sinensis_parameters.note_lock[8]= *parameters.getRawParameterValue("GSHARP")>0.5;
+  sinensis_parameters.note_lock[9]= *parameters.getRawParameterValue("A")>0.5;
+  sinensis_parameters.note_lock[10]= *parameters.getRawParameterValue("ASHARP")>0.5;
+  sinensis_parameters.note_lock[11]= *parameters.getRawParameterValue("B")>0.5;
 
   // SET OBJECT
   sinensis[0].setParameters(sinensis_parameters);

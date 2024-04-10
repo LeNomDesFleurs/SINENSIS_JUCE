@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "name": "(lldb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "enter program name, for example ${workspaceFolder}/a.out",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "CMake Debug",
+            "program": "${command:cmake.launchTargetPath}",
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

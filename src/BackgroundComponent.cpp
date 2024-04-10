@@ -3,7 +3,7 @@
 void BackgroundComponent::paint(juce::Graphics& g) {
   g.fillAll(CustomColors::blue);
   g.setColour(CustomColors::black);
-  juce::Path motif = paintMotif(300, 540, 10);
+  juce::Path motif = paintMotif(300, 640, 10);
   g.strokePath(motif, {0.5, PathStrokeType::curved, PathStrokeType::rounded});
 
   int left_margin = 20;
@@ -11,11 +11,11 @@ void BackgroundComponent::paint(juce::Graphics& g) {
   int border_size = 1;
   int corner_size = 5;
 
-  int sizes[4] = {100, 80, 80, 100};
+  int sizes[5] = {100, 80, 80, 80, 100};
   // vertical position of the first block
   int y_position = 75;
 
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 5; i++) {
     g.setColour(CustomColors::black);
 
     int x = left_margin - border_size;
@@ -24,7 +24,7 @@ void BackgroundComponent::paint(juce::Graphics& g) {
     int h = sizes[i] + border_size * 2;
     g.fillRoundedRectangle(x, y, w, h, corner_size);
 
-    if (i == 0 || i == 3) {
+    if (i == 0 || i == 4) {
       g.setColour(CustomColors::green);
 
     } else {
