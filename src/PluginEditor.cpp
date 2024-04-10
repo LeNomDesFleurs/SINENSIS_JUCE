@@ -36,7 +36,7 @@ SinensisAudioProcessorEditor::SinensisAudioProcessorEditor(
   root_frequency = 0.5;
   band_selector_mode = Sinensis::BandMode::LowHigh;
 
-  setSize(300, 540);
+  setSize(300, 640);
 }
 
 SinensisAudioProcessorEditor::~SinensisAudioProcessorEditor() {
@@ -95,6 +95,29 @@ void SinensisAudioProcessorEditor::resized() {
 
   attackSlider.setBounds(45, 95, 70, 70);
   decaySlider.setBounds(180, 95, 70, 70);
+
+  float button_width = 10;
+  float button_height = 20;
+  float x_position = 45;
+  float y_position = 600;
+  cButton.setBounds(x_position, y_position, button_width, button_height);
+  x_position += button_width;
+  cSharpButton.setBounds(x_position, y_position-button_height, button_width, button_height);
+  dButton.setBounds(x_position, y_position, button_width, button_height);
+  x_position += button_width;
+  dSharpButton.setBounds(x_position, y_position-button_height, button_width, button_height);
+  eButton.setBounds(x_position, y_position, button_width, button_height);
+  x_position += button_width;
+  fButton.setBounds(x_position, y_position, button_width, button_height);
+  x_position += button_width;
+  fSharpButton.setBounds(x_position, y_position-button_height, button_width, button_height);
+  gButton.setBounds(x_position, y_position, button_width, button_height);
+  x_position += button_width;
+  gSharpButton.setBounds(x_position, y_position-button_height, button_width, button_height);
+  aButton.setBounds(x_position, y_position, button_width, button_height);
+  x_position += button_width;
+  aSharpButton.setBounds(x_position, y_position-button_height, button_width, button_height);
+  bButton.setBounds(x_position, y_position, button_width, button_height);
   // midiMode.setBounds(bounds.removeFromLeft(300));
   // title.setBounds(bounds.removeFromTop(100));
   // bandControl.setBounds(bounds.removeFromRight(600));
@@ -102,10 +125,30 @@ void SinensisAudioProcessorEditor::resized() {
 }
 
 std::vector<juce::Component*> SinensisAudioProcessorEditor::getComps() {
-  return {&attackSlider,  &decaySlider,        &cutoffFrequencySlider,
-          &QSlider,       &BandSelectorSlider, &ratioSlider,
-          &lowHighButton, &oddEvenButton,      &peakButton,
-          &midiOffButton, &midiMonoButton,     &midiPolyButton};
+  return {&attackSlider,
+          &decaySlider,
+          &cutoffFrequencySlider,
+          &QSlider,
+          &BandSelectorSlider,
+          &ratioSlider,
+          &lowHighButton,
+          &oddEvenButton,
+          &peakButton,
+          &midiOffButton,
+          &midiMonoButton,
+          &midiPolyButton,
+          &cButton,
+          &cSharpButton,
+          &dButton,
+          &dSharpButton,
+          &eButton,
+          &fButton,
+          &fSharpButton,
+          &gButton,
+          &gSharpButton,
+          &aButton,
+          &aSharpButton,
+          &bButton};
 }
 
 std::vector<juce::Slider*> SinensisAudioProcessorEditor::getSliderComps() {
@@ -115,7 +158,18 @@ std::vector<juce::Slider*> SinensisAudioProcessorEditor::getSliderComps() {
 
 std::vector<juce::Button*> SinensisAudioProcessorEditor::getButtonComps() {
   return {&lowHighButton, &oddEvenButton,  &peakButton,
-          &midiOffButton, &midiMonoButton, &midiPolyButton};
+          &midiOffButton, &midiMonoButton, &midiPolyButton, &cButton,
+          &cSharpButton,
+          &dButton,
+          &dSharpButton,
+          &eButton,
+          &fButton,
+          &fSharpButton,
+          &gButton,
+          &gSharpButton,
+          &aButton,
+          &aSharpButton,
+          &bButton};
 }
 
 void SinensisAudioProcessorEditor::setButtonParameters() {
@@ -145,6 +199,31 @@ void SinensisAudioProcessorEditor::setButtonParameters() {
       *apvts->getParameter("MIDIMODE"), midi_modes_buttons, "MIDIMODE", 1);
   band_modes_radio_group = std::make_unique<RadioButtonAttachment>(
       *apvts->getParameter("BANDMODE"), band_modes_buttons, "BANDMODE", 2);
+
+cButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
+      *apvts, "C", cButton));
+cSharpButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
+      *apvts, "CSHARP", cSharpButton));
+dButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
+      *apvts, "D", dButton));
+dSharpButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
+      *apvts, "DSHARP", dSharpButton));
+fButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
+      *apvts, "F", fButton));
+fSharpButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
+      *apvts, "FSHARP", fSharpButton));
+gButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
+      *apvts, "G", gButton));
+gSharpButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
+      *apvts, "GSHARP", gSharpButton));
+aButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
+      *apvts, "A", aButton));
+aSharpButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
+      *apvts, "ASHARP", aSharpButton));
+bButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
+      *apvts, "B", bButton));
+
+
 }
 
 void SinensisAudioProcessorEditor::setSlidersParameters() {

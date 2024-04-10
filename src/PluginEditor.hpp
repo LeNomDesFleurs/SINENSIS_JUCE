@@ -93,6 +93,16 @@ class SinensisAudioProcessorEditor
       midiOffButtonAttachement, midiMonoButtonAttachement,
       midiPolyButtonAttachement;
 
+  juce::ToggleButton cButton{""}, cSharpButton{""}, dButton{""},
+      dSharpButton{""}, eButton{""}, fButton{""}, fSharpButton{""}, gButton{""},
+      gSharpButton{""}, aButton{""}, aSharpButton{""}, bButton{""};
+
+std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>
+ cButtonAttachement, cSharpButtonAttachement, dButtonAttachement,
+      dSharpButtonAttachement, eButtonAttachement, fButtonAttachement, fSharpButtonAttachement, gButtonAttachement,
+      gSharpButtonAttachement, aButtonAttachement, aSharpButtonAttachement, bButtonAttachement;
+
+
   juce::Slider outputVolumeSlider;
 
   std::unique_ptr<RadioButtonAttachment> midi_modes_radio_group;

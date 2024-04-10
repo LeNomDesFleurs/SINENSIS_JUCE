@@ -71,6 +71,7 @@ class Sinensis {
     float attack;
     float decay;
     float output_volume;
+    bool note_lock[12];
   };
   Sinensis();
   ~Sinensis();
@@ -82,6 +83,7 @@ class Sinensis {
   void prepareMidiOff();
   void prepareMidiMono(juce::MidiBuffer& midi_buffer);
   void prepareMidiPoly(juce::MidiBuffer& midi_buffer);
+  float noteLock(float frequency);
 
   void computeGain();
   void computeLowHigh();

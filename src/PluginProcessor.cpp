@@ -198,6 +198,19 @@ SinensisAudioProcessor::createParams() {
       "DECAY", "Decay", juce::NormalisableRange<float>{0.1f, 3.0f, 0.1f},
       0.4f));
 
+  params.push_back(std::make_unique<juce::AudioParameterBool>("C", "C", false));
+  params.push_back(std::make_unique<juce::AudioParameterBool>("CSHARP", "CSHARP", false));
+  params.push_back(std::make_unique<juce::AudioParameterBool>("D", "D", false));
+  params.push_back(std::make_unique<juce::AudioParameterBool>("DSHARP", "DSHARP", false));
+  params.push_back(std::make_unique<juce::AudioParameterBool>("E", "E", false));
+  params.push_back(std::make_unique<juce::AudioParameterBool>("F", "F", false));
+  params.push_back(std::make_unique<juce::AudioParameterBool>("FSHARP", "FSHARP", false));
+  params.push_back(std::make_unique<juce::AudioParameterBool>("G", "G", false));
+  params.push_back(std::make_unique<juce::AudioParameterBool>("GSHARP", "GSHARP", false));
+  params.push_back(std::make_unique<juce::AudioParameterBool>("A", "A", false));
+  params.push_back(std::make_unique<juce::AudioParameterBool>("ASHARP", "ASHARP", false));
+  params.push_back(std::make_unique<juce::AudioParameterBool>("B", "B", false));
+
   return {params.begin(), params.end()};
 }
 
@@ -246,6 +259,20 @@ void SinensisAudioProcessor::setParam() {
   // ENVELOPPE
   sinensis_parameters.attack = *parameters.getRawParameterValue("ATTACK");
   sinensis_parameters.decay = *parameters.getRawParameterValue("DECAY");
+
+  sinensis_parameters.note_lock[0]=*parameters.getRawParameterValue("C");
+  sinensis_parameters.note_lock[1]=*parameters.getRawParameterValue("CSHARP");
+  sinensis_parameters.note_lock[2]=*parameters.getRawParameterValue("D");
+  sinensis_parameters.note_lock[3]=*parameters.getRawParameterValue("DSHARP");
+  sinensis_parameters.note_lock[4]=*parameters.getRawParameterValue("E");
+  sinensis_parameters.note_lock[5]=*parameters.getRawParameterValue("F");
+  sinensis_parameters.note_lock[6]=*parameters.getRawParameterValue("FSHARP");
+  sinensis_parameters.note_lock[7]=*parameters.getRawParameterValue("G");
+  sinensis_parameters.note_lock[8]=*parameters.getRawParameterValue("GSHARP");
+  sinensis_parameters.note_lock[9]=*parameters.getRawParameterValue("A");
+  sinensis_parameters.note_lock[10]=*parameters.getRawParameterValue("ASHARP");
+  sinensis_parameters.note_lock[11]=*parameters.getRawParameterValue("B");
+
   // SET OBJECT
   sinensis[0].setParameters(sinensis_parameters);
   sinensis[1].setParameters(sinensis_parameters);
