@@ -57,7 +57,7 @@ void SinensisAudioProcessorEditor::paintOverChildren(juce::Graphics& g) {
                                                  BinaryData::NOI_svgSize);
 
   // juce::AffineTransform scale = Set::scale(0.2);
-  juce::Rectangle<float> position = {150.f - 36 / 2, 495.f, 36.f, 36.f};
+  juce::Rectangle<float> position = {150.f - 36 / 2, 590.f, 36.f, 36.f};
   juce::RectanglePlacement placement = (36);
   svg->setTransformToFit(position, placement);
   svg->draw(g, 1.0);
@@ -81,7 +81,7 @@ void SinensisAudioProcessorEditor::resized() {
   midiPolyButton.setBounds(buttonBounds.removeFromLeft(temp_width));
 
   // buttonBounds = {25, 355, 250, 30};
-  buttonBounds = {65, 540, 170, 30};
+  buttonBounds = {65, 545, 170, 30};
   temp_width = buttonBounds.getWidth() / 3;
 
   lowHighButton.setBounds(buttonBounds.removeFromLeft(temp_width));
@@ -101,21 +101,31 @@ void SinensisAudioProcessorEditor::resized() {
   float y_position = 225;
   cButton.setBounds(x_position, y_position, button_width, button_height);
   x_position += button_width;
-  cSharpButton.setBounds(x_position-(button_width/2), y_position-button_height, button_width, button_height);
+  cSharpButton.setBounds(x_position - (button_width / 2),
+                         y_position - button_height, button_width,
+                         button_height);
   dButton.setBounds(x_position, y_position, button_width, button_height);
   x_position += button_width;
-  dSharpButton.setBounds(x_position-(button_width/2), y_position-button_height, button_width, button_height);
+  dSharpButton.setBounds(x_position - (button_width / 2),
+                         y_position - button_height, button_width,
+                         button_height);
   eButton.setBounds(x_position, y_position, button_width, button_height);
   x_position += button_width;
   fButton.setBounds(x_position, y_position, button_width, button_height);
   x_position += button_width;
-  fSharpButton.setBounds(x_position-(button_width/2), y_position-button_height, button_width, button_height);
+  fSharpButton.setBounds(x_position - (button_width / 2),
+                         y_position - button_height, button_width,
+                         button_height);
   gButton.setBounds(x_position, y_position, button_width, button_height);
   x_position += button_width;
-  gSharpButton.setBounds(x_position-(button_width/2), y_position-button_height, button_width, button_height);
+  gSharpButton.setBounds(x_position - (button_width / 2),
+                         y_position - button_height, button_width,
+                         button_height);
   aButton.setBounds(x_position, y_position, button_width, button_height);
   x_position += button_width;
-  aSharpButton.setBounds(x_position-(button_width/2), y_position-button_height, button_width, button_height);
+  aSharpButton.setBounds(x_position - (button_width / 2),
+                         y_position - button_height, button_width,
+                         button_height);
   bButton.setBounds(x_position, y_position, button_width, button_height);
   // midiMode.setBounds(bounds.removeFromLeft(300));
   // title.setBounds(bounds.removeFromTop(100));
@@ -156,19 +166,11 @@ std::vector<juce::Slider*> SinensisAudioProcessorEditor::getSliderComps() {
 }
 
 std::vector<juce::Button*> SinensisAudioProcessorEditor::getButtonComps() {
-  return {&lowHighButton, &oddEvenButton,  &peakButton,
-          &midiOffButton, &midiMonoButton, &midiPolyButton, &cButton,
-          &cSharpButton,
-          &dButton,
-          &dSharpButton,
-          &eButton,
-          &fButton,
-          &fSharpButton,
-          &gButton,
-          &gSharpButton,
-          &aButton,
-          &aSharpButton,
-          &bButton};
+  return {&lowHighButton,  &oddEvenButton,  &peakButton,   &midiOffButton,
+          &midiMonoButton, &midiPolyButton, &cButton,      &cSharpButton,
+          &dButton,        &dSharpButton,   &eButton,      &fButton,
+          &fSharpButton,   &gButton,        &gSharpButton, &aButton,
+          &aSharpButton,   &bButton};
 }
 
 void SinensisAudioProcessorEditor::setButtonParameters() {
@@ -199,30 +201,39 @@ void SinensisAudioProcessorEditor::setButtonParameters() {
   band_modes_radio_group = std::make_unique<RadioButtonAttachment>(
       *apvts->getParameter("BANDMODE"), band_modes_buttons, "BANDMODE", 2);
 
-cButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
-      *apvts, "C", cButton));
-cSharpButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
-      *apvts, "CSHARP", cSharpButton));
-dButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
-      *apvts, "D", dButton));
-dSharpButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
-      *apvts, "DSHARP", dSharpButton));
-fButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
-      *apvts, "F", fButton));
-fSharpButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
-      *apvts, "FSHARP", fSharpButton));
-gButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
-      *apvts, "G", gButton));
-gSharpButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
-      *apvts, "GSHARP", gSharpButton));
-aButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
-      *apvts, "A", aButton));
-aSharpButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
-      *apvts, "ASHARP", aSharpButton));
-bButtonAttachement.reset(new juce::AudioProcessorValueTreeState::ButtonAttachment(
-      *apvts, "B", bButton));
-
-
+  cButtonAttachement.reset(
+      new juce::AudioProcessorValueTreeState::ButtonAttachment(*apvts, "C",
+                                                               cButton));
+  cSharpButtonAttachement.reset(
+      new juce::AudioProcessorValueTreeState::ButtonAttachment(*apvts, "CSHARP",
+                                                               cSharpButton));
+  dButtonAttachement.reset(
+      new juce::AudioProcessorValueTreeState::ButtonAttachment(*apvts, "D",
+                                                               dButton));
+  dSharpButtonAttachement.reset(
+      new juce::AudioProcessorValueTreeState::ButtonAttachment(*apvts, "DSHARP",
+                                                               dSharpButton));
+  fButtonAttachement.reset(
+      new juce::AudioProcessorValueTreeState::ButtonAttachment(*apvts, "F",
+                                                               fButton));
+  fSharpButtonAttachement.reset(
+      new juce::AudioProcessorValueTreeState::ButtonAttachment(*apvts, "FSHARP",
+                                                               fSharpButton));
+  gButtonAttachement.reset(
+      new juce::AudioProcessorValueTreeState::ButtonAttachment(*apvts, "G",
+                                                               gButton));
+  gSharpButtonAttachement.reset(
+      new juce::AudioProcessorValueTreeState::ButtonAttachment(*apvts, "GSHARP",
+                                                               gSharpButton));
+  aButtonAttachement.reset(
+      new juce::AudioProcessorValueTreeState::ButtonAttachment(*apvts, "A",
+                                                               aButton));
+  aSharpButtonAttachement.reset(
+      new juce::AudioProcessorValueTreeState::ButtonAttachment(*apvts, "ASHARP",
+                                                               aSharpButton));
+  bButtonAttachement.reset(
+      new juce::AudioProcessorValueTreeState::ButtonAttachment(*apvts, "B",
+                                                               bButton));
 }
 
 void SinensisAudioProcessorEditor::setSlidersParameters() {
@@ -282,6 +293,42 @@ void SinensisAudioProcessorEditor::parameterValueChanged(int parameterIndex,
     case 3:
       ratio = (newValue * 1.5) + 0.5;
       break;
+    case 9:
+      note_lock[0] = newValue > 0.5;
+      break;
+    case 10:
+      note_lock[1] = newValue > 0.5;
+      break;
+    case 11:
+      note_lock[2] = newValue > 0.5;
+      break;
+    case 12:
+      note_lock[3] = newValue > 0.5;
+      break;
+    case 13:
+      note_lock[4] = newValue > 0.5;
+      break;
+    case 14:
+      note_lock[5] = newValue > 0.5;
+      break;
+    case 15:
+      note_lock[6] = newValue > 0.5;
+      break;
+    case 16:
+      note_lock[7] = newValue > 0.5;
+      break;
+    case 17:
+      note_lock[8] = newValue > 0.5;
+      break;
+    case 18:
+      note_lock[9] = newValue > 0.5;
+      break;
+    case 19:
+      note_lock[10] = newValue > 0.5;
+      break;
+    case 20:
+      note_lock[11] = newValue > 0.5;
+      break;
   }
 }
 
@@ -292,7 +339,7 @@ void SinensisAudioProcessorEditor::timerCallback() {
 }
 
 void SinensisAudioProcessorEditor::drawBandSelectionWidget(Graphics& g) {
-  float marge_basse = 535;
+  float marge_basse = 540;
   float taille = 70;
   float x_position = 50;
   float ecart = 40;
@@ -476,5 +523,33 @@ void SinensisAudioProcessorEditor::computeFrequencyMidiOff() {
       }
     }
     m_frequency[i] = std::pow((thisBandFreq - 30) / 14970., 0.5);
+
+    bool note_lock_on = false;
+    // check for note lock
+    int j = 0;
+    while (j < 12 && !note_lock_on) {
+      note_lock_on = note_lock[j] ? true : false;
+      j++;
+    }
+    // if not lock, skim through all frequencies until one is superior to actual
+    // frequency
+    if (note_lock_on) {
+      m_frequency[i] = std::pow((noteLock(thisBandFreq) - 30) / 14970., 0.5);
+      // else, keep the calculated band
+    } else {
+      m_frequency[i] = std::pow((thisBandFreq - 30) / 14970., 0.5);
+    }
   }
+}
+
+float SinensisAudioProcessorEditor::noteLock(float frequency) {
+  for (int j = 0; j < 120; j++) {
+    int note = j % 12;
+    if (note_lock[note]) {
+      if (Tools::equal_temperament_frequencies[j] > frequency) {
+        return Tools::equal_temperament_frequencies[j];
+      }
+    }
+  }
+  return 0;
 }

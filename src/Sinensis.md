@@ -1,10 +1,10 @@
 # Sinensis
 
-## UI
+## 🖼️ UI
 
 -   [ ] charte d'épaisseur des traits ?
 
-## Functionality
+## 🛠️ Functionality
 
 -   [ ] changer la courbe de la root frequency
 -   [ ] Rework poly mode to allow 6x6 filter band
@@ -13,9 +13,13 @@
 -   [ ] Q->0 = Dry signal
 -   [ ] pitch wheel
 
-## Optimization
+## ⚙️ Optimization
 
 -   [ ] limit band control widget refresh to certain parameter
+
+## 🪲 Bug
+
+-   [ ] bug in note lock max value, clip to max note in ui in dsp
 
 ## Other
 
@@ -166,6 +170,6 @@ j'ai essayé `JUCE_VST_NUM_MIDI_INS 1` qui n'a pas fonctionné.
 
 ## note lock
 
-- [x] add buttons
-- [ ] update frequency band UI function
-- [ ] button 
+-   [x] add buttons
+-   [ ] update frequency band UI function
+-   [ ] button

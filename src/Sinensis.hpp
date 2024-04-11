@@ -13,6 +13,7 @@
 
 #include "Filter.hpp"
 #include "JuceHeader.h"
+#include "Tools.hpp"
 
 class MonoMidiNote {
  private:
@@ -72,7 +73,12 @@ class Sinensis {
     float decay;
     float output_volume;
     bool note_lock[12];
+
   };
+
+  
+
+
   Sinensis();
   ~Sinensis();
   void setParameters(Sinensis::Parameters parameters);
@@ -104,7 +110,7 @@ class Sinensis {
 
   void setSamplingFrequency(float sampling_frequency);
 
- private:
+
   Sinensis::Parameters m_parameters;
   noi::Filter::BPF m_bpf[6];
   float m_sampling_frequency;

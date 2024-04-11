@@ -17,6 +17,7 @@
 #include "PlaceHolder.hpp"
 #include "PluginProcessor.hpp"
 #include "RadioButtonAttachment.hpp"
+#include "Tools.hpp"
 
 //==============================================================================
 /**
@@ -56,8 +57,10 @@ class SinensisAudioProcessorEditor
   void computePeak();
   void paintOverChildren(juce::Graphics&) override;
   void computeFrequencyMidiOff();
+  float noteLock(float frequency);
 
  private:
+ //Look And Feel
   OtherLookAndFeel otherLookAndFeel;  // [2]
   RatioLookAndFeel ratio_look_and_feel;
   ResonanceLookAndFeel resonance_look_and_feel;
@@ -110,11 +113,16 @@ std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>
   std::unique_ptr<RadioButtonAttachment> band_modes_radio_group;
 
   juce::Atomic<bool> parametersChanged;
+
+  Sinensis editorSinensis;
+
   float ratio;
   float band_selector;
   float root_frequency;
   bool background_generated = false;
   float m_frequency[6];
+  bool note_lock[12];
+
   std::array<float, 6> gains;
   Sinensis::BandMode band_selector_mode = Sinensis::BandMode::LowHigh;
   Sinensis::MidiMode midi_mode;
