@@ -45,19 +45,18 @@ class SinensisAudioProcessorEditor
   std::vector<juce::Slider*> getSliderComps();
   void setButtonParameters();
   void setSlidersParameters();
-  juce::Path generateBackground(int size_x, int size_y, int block_size);
-  void addLine(juce::Path& path, int initial_x, int initial_y,
-               int destination_x, int destination_y);
+//   juce::Path generateBackground(int size_x, int size_y, int block_size);
+//   void addLine(juce::Path& path, int initial_x, int initial_y,int destination_x, int destination_y);
   void drawBandSelectionWidget(Graphics& g);
   void drawFrequencyWidget(juce::Graphics& g);
-  juce::Colour getGradient(float value);
-  void updateGains();
-  void computeLowHigh();
-  void computeOddEven();
-  void computePeak();
+//   juce::Colour getGradient(float value);
+  void updateModes();
+//   void computeLowHigh();
+//   void computeOddEven();
+//   void computePeak();
   void paintOverChildren(juce::Graphics&) override;
-  void computeFrequencyMidiOff();
-  float noteLock(float frequency);
+//   void computeFrequencyMidiOff();
+//   float noteLock(float frequency);
 
  private:
  //Look And Feel
@@ -116,16 +115,16 @@ std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>
 
   Sinensis editorSinensis;
 
-  float ratio;
-  float band_selector;
-  float root_frequency;
+//   float ratio;
+//   float band_selector;
+//   float root_frequency;
   bool background_generated = false;
-  float m_frequency[6];
-  bool note_lock[12];
+//   float m_frequency[6];
+//   bool note_lock[12];
 
-  std::array<float, 6> gains;
-  Sinensis::BandMode band_selector_mode = Sinensis::BandMode::LowHigh;
-  Sinensis::MidiMode midi_mode;
+//   std::array<float, 6> gains;
+//   Sinensis::BandMode band_selector_mode = Sinensis::BandMode::LowHigh;
+//   Sinensis::MidiMode midi_mode;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SinensisAudioProcessorEditor)
 };

@@ -19,7 +19,7 @@
 
 ## 🪲 Bug
 
--   [ ] bug in note lock max value, clip to max note in ui in dsp
+-   [ ] jump in band select ui at beginning
 
 ## Other
 
@@ -27,6 +27,8 @@
 
 ## Dump
 
+-   [x] bug in note lock max value, clip to max note in ui in dsp
+-   [x] cutoff widget not appearing anymore
 -   [x] piano widget pour lock note
 -   [x] widget horizontal / vertical
 -   [x] ~~Comment set les défauts ? l'ui commence toujours en Odd/even bizarrement~~

@@ -31,10 +31,6 @@ SinensisAudioProcessorEditor::SinensisAudioProcessorEditor(
   startTimerHz(30);
 
   parametersChanged = false;
-  ratio = 1.5;
-  band_selector = 0.3;
-  root_frequency = 0.5;
-  band_selector_mode = Sinensis::BandMode::LowHigh;
 
   setSize(300, 640);
 }
@@ -48,11 +44,25 @@ SinensisAudioProcessorEditor::~SinensisAudioProcessorEditor() {
 
 void SinensisAudioProcessorEditor::paintOverChildren(juce::Graphics& g) {
   // if (!background_generated) {
-  if (midi_mode == Sinensis::MidiMode::Off) {
+  editorSinensis.m_parameters.root_frequency =
+      *apvts->getRawParameterValue("root_frequency");
+  updateModes();
+  editorSinensis.prepareMidiOff();
+
+  if (editorSinensis.m_parameters.midi_mode == Sinensis::MidiMode::Off) {
     drawFrequencyWidget(g);
+    attackSlider.setVisible(false);
+    decaySlider.setVisible(false);
+    cutoffFrequencySlider.setVisible(true);
+  } else {
+    attackSlider.setVisible(true);
+    decaySlider.setVisible(true);
+    cutoffFrequencySlider.setVisible(false);
   }
+  // update all Sinensis variable
   drawBandSelectionWidget(g);
 
+  // Draw Logo
   const auto svg = Drawable::createFromImageData(BinaryData::NOI_svg,
                                                  BinaryData::NOI_svgSize);
 
@@ -89,9 +99,9 @@ void SinensisAudioProcessorEditor::resized() {
   peakButton.setBounds(buttonBounds.removeFromLeft(temp_width));
 
   cutoffFrequencySlider.setBounds(20, 90, 260, 80);
+  BandSelectorSlider.setBounds(20, 465, 260, 83);
   QSlider.setBounds(25, 270, 250, 80);
   ratioSlider.setBounds(25, 370, 250, 70);
-  BandSelectorSlider.setBounds(25, 475, 250, 83);
   attackSlider.setBounds(45, 95, 70, 70);
   decaySlider.setBounds(180, 95, 70, 70);
 
@@ -285,49 +295,49 @@ void SinensisAudioProcessorEditor::parameterValueChanged(int parameterIndex,
     // case 1:
     //   break;
     case 2:
-      root_frequency = newValue;
+      // editorSinensis.m_parameters.root_frequency = newValue;
       break;
     case 5:
-      band_selector = newValue;
+      editorSinensis.m_parameters.band_selector = newValue;
       break;
     case 3:
-      ratio = (newValue * 1.5) + 0.5;
+      editorSinensis.m_parameters.ratio = (newValue * 1.5) + 0.5;
       break;
     case 9:
-      note_lock[0] = newValue > 0.5;
+      editorSinensis.m_parameters.note_lock[0] = newValue > 0.5;
       break;
     case 10:
-      note_lock[1] = newValue > 0.5;
+      editorSinensis.m_parameters.note_lock[1] = newValue > 0.5;
       break;
     case 11:
-      note_lock[2] = newValue > 0.5;
+      editorSinensis.m_parameters.note_lock[2] = newValue > 0.5;
       break;
     case 12:
-      note_lock[3] = newValue > 0.5;
+      editorSinensis.m_parameters.note_lock[3] = newValue > 0.5;
       break;
     case 13:
-      note_lock[4] = newValue > 0.5;
+      editorSinensis.m_parameters.note_lock[4] = newValue > 0.5;
       break;
     case 14:
-      note_lock[5] = newValue > 0.5;
+      editorSinensis.m_parameters.note_lock[5] = newValue > 0.5;
       break;
     case 15:
-      note_lock[6] = newValue > 0.5;
+      editorSinensis.m_parameters.note_lock[6] = newValue > 0.5;
       break;
     case 16:
-      note_lock[7] = newValue > 0.5;
+      editorSinensis.m_parameters.note_lock[7] = newValue > 0.5;
       break;
     case 17:
-      note_lock[8] = newValue > 0.5;
+      editorSinensis.m_parameters.note_lock[8] = newValue > 0.5;
       break;
     case 18:
-      note_lock[9] = newValue > 0.5;
+      editorSinensis.m_parameters.note_lock[9] = newValue > 0.5;
       break;
     case 19:
-      note_lock[10] = newValue > 0.5;
+      editorSinensis.m_parameters.note_lock[10] = newValue > 0.5;
       break;
     case 20:
-      note_lock[11] = newValue > 0.5;
+      editorSinensis.m_parameters.note_lock[11] = newValue > 0.5;
       break;
   }
 }
@@ -339,12 +349,14 @@ void SinensisAudioProcessorEditor::timerCallback() {
 }
 
 void SinensisAudioProcessorEditor::drawBandSelectionWidget(Graphics& g) {
+  std::array<float, 6> gains = editorSinensis.m_gain;
+
   float marge_basse = 540;
   float taille = 70;
   float x_position = 50;
   float ecart = 40;
   juce::Point<float> point_bas, point_haut;
-  updateGains();
+
   for (int i = 0; i < 6; i++) {
     juce::Path lines;
     juce::Path lines_background;
@@ -371,113 +383,21 @@ void SinensisAudioProcessorEditor::drawBandSelectionWidget(Graphics& g) {
   }
 }
 
-void SinensisAudioProcessorEditor::updateGains() {
+void SinensisAudioProcessorEditor::updateModes() {
   int band_mode = static_cast<int>(*apvts->getRawParameterValue("BANDMODE"));
 
-  switch (band_mode) {
-    case 0:
-      band_selector_mode = Sinensis::BandMode::LowHigh;
-      break;
-    case 1:
-      band_selector_mode = Sinensis::BandMode::OddEven;
-      break;
-    case 2:
-      band_selector_mode = Sinensis::BandMode::Peak;
-      break;
-  }
+  editorSinensis.m_parameters.band_selector_mode =
+      static_cast<Sinensis::BandMode>(band_mode);
 
   int i_midi_mode = static_cast<int>(*apvts->getRawParameterValue("MIDIMODE"));
 
-  switch (i_midi_mode) {
-    case 0:
-      midi_mode = Sinensis::MidiMode::Off;
-      break;
-    case 1:
-      midi_mode = Sinensis::MidiMode::Mono;
-      break;
-    case 2:
-      midi_mode = Sinensis::MidiMode::Poly;
-      break;
-  }
-
-  if (midi_mode == Sinensis::MidiMode::Off) {
-    attackSlider.setVisible(false);
-    decaySlider.setVisible(false);
-    cutoffFrequencySlider.setVisible(true);
-  } else {
-    attackSlider.setVisible(true);
-    decaySlider.setVisible(true);
-    cutoffFrequencySlider.setVisible(false);
-  }
-
-  switch (band_selector_mode) {
-    case Sinensis::LowHigh:
-      computeLowHigh();
-      break;
-    case Sinensis::OddEven:
-      computeOddEven();
-      break;
-    case Sinensis::Peak:
-      computePeak();
-      break;
-  }
-}
-
-void SinensisAudioProcessorEditor::computeLowHigh() {
-  float alpha = band_selector * 4.0f - 2.0f;
-  float beta = -2.0f * (band_selector * band_selector) + 1.0f;
-
-  for (int i = 0; i < 6; i++) {
-    float this_band_index = static_cast<float>(i);
-    this_band_index /= 5.0f;
-    float this_band_gain = this_band_index * alpha + beta;
-    if (this_band_gain < 0.0f) {
-      this_band_gain = 0.0f;
-    }
-    gains[i] = this_band_gain;
-  }
-}
-
-void SinensisAudioProcessorEditor::computeOddEven() {
-  for (int i = 0; i < 6; i++) {
-    float this_band_gain = 0;
-    // odd case
-    if (i == 0 || i == 2 || i == 4) {
-      this_band_gain = band_selector;
-    }
-    // even case
-    if (i == 1 || i == 3 || i == 5) {
-      this_band_gain = 1.0f - band_selector;
-    }
-    gains[i] = this_band_gain;
-  }
-}
-
-void SinensisAudioProcessorEditor::computePeak() {
-  float cursor = band_selector;
-  cursor *= 5.;
-  for (int i = 0; i < 6; i++) {
-    float band_index = static_cast<float>(i);
-    float band_gain = 0.0f;
-    if (cursor < band_index) {
-      band_gain = band_index - cursor;
-    } else {
-      band_gain = cursor - band_index;
-    }
-
-    band_gain = 1 - band_gain;
-    if (band_gain > 1.) {
-      band_gain = 1.;
-    }
-    if (band_gain < 0.) {
-      band_gain = 0.;
-    }
-    gains[i] = band_gain;
-  }
+  editorSinensis.m_parameters.midi_mode =
+      static_cast<Sinensis::MidiMode>(i_midi_mode);
 }
 
 void SinensisAudioProcessorEditor::drawFrequencyWidget(juce::Graphics& g) {
-  computeFrequencyMidiOff();
+  std::array<float, 6> gains = editorSinensis.m_gain;
+  std::array<float, 6> frequencies = editorSinensis.m_frequency;
 
   float x_position = 28;
   float y_position = 95;
@@ -486,70 +406,24 @@ void SinensisAudioProcessorEditor::drawFrequencyWidget(juce::Graphics& g) {
   juce::Path main_line;
   g.setColour(CustomColors::getGradient(gains[0]));
 
-  GraphicTools::addLine(main_line, x_position + (width * m_frequency[0]),
-                        y_position, x_position + (width * m_frequency[0]),
+  float shapedFrequency = std::pow((frequencies[0] - 30) / 14970., 0.5);
+
+  GraphicTools::addLine(main_line, x_position + (width * shapedFrequency),
+                        y_position, x_position + (width * shapedFrequency),
                         y_position + height);
 
   g.strokePath(main_line, {5, PathStrokeType::curved, PathStrokeType::rounded});
 
   for (int i = 1; i < 6; i++) {
     juce::Path other_bands;
-    GraphicTools::addLine(other_bands, x_position + (width * m_frequency[i]),
-                          y_position, x_position + (width * m_frequency[i]),
+    float shapedFrequency = std::pow((frequencies[i] - 30) / 14970., 0.5);
+
+    GraphicTools::addLine(other_bands, x_position + (width * shapedFrequency),
+                          y_position, x_position + (width * shapedFrequency),
                           y_position + height);
     g.setColour(CustomColors::getGradient(gains[i]));
     // g.setColour(CustomColors::red);
     g.strokePath(other_bands,
                  {2, PathStrokeType::curved, PathStrokeType::rounded});
   }
-}
-
-void SinensisAudioProcessorEditor::computeFrequencyMidiOff() {
-  for (int i = 0; i < 6; i++) {
-    // multiply frequence by ratio
-
-    float thisBandFreq = *apvts->getRawParameterValue("root_frequency");
-    for (int j = 1; j <= i; j++) {
-      thisBandFreq *= ratio;
-    }
-    thisBandFreq = truncf(thisBandFreq);
-    // frequency folding
-    while (thisBandFreq > 15000.f || thisBandFreq < 30.f) {
-      if (thisBandFreq > 15000.F) {
-        thisBandFreq = 15000.f - (thisBandFreq - 15000.f);
-      }
-      if (thisBandFreq < 30.f) {
-        thisBandFreq = 30.f + (30.f - thisBandFreq);
-      }
-    }
-    m_frequency[i] = std::pow((thisBandFreq - 30) / 14970., 0.5);
-
-    bool note_lock_on = false;
-    // check for note lock
-    int j = 0;
-    while (j < 12 && !note_lock_on) {
-      note_lock_on = note_lock[j] ? true : false;
-      j++;
-    }
-    // if not lock, skim through all frequencies until one is superior to actual
-    // frequency
-    if (note_lock_on) {
-      m_frequency[i] = std::pow((noteLock(thisBandFreq) - 30) / 14970., 0.5);
-      // else, keep the calculated band
-    } else {
-      m_frequency[i] = std::pow((thisBandFreq - 30) / 14970., 0.5);
-    }
-  }
-}
-
-float SinensisAudioProcessorEditor::noteLock(float frequency) {
-  for (int j = 0; j < 120; j++) {
-    int note = j % 12;
-    if (note_lock[note]) {
-      if (Tools::equal_temperament_frequencies[j] > frequency) {
-        return Tools::equal_temperament_frequencies[j];
-      }
-    }
-  }
-  return 0;
 }

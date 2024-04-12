@@ -217,30 +217,13 @@ SinensisAudioProcessor::createParams() {
 void SinensisAudioProcessor::setParam() {
   int midi_mode =
       static_cast<float>(*parameters.getRawParameterValue("MIDIMODE"));
-  switch (midi_mode) {
-    case 0:
-      sinensis_parameters.midi_mode = Sinensis::MidiMode::Off;
-      break;
-    case 1:
-      sinensis_parameters.midi_mode = Sinensis::MidiMode::Mono;
-      break;
-    case 2:
-      sinensis_parameters.midi_mode = Sinensis::MidiMode::Poly;
-      break;
-  }
-  int band_mode =
-      static_cast<float>(*parameters.getRawParameterValue("BANDMODE"));
-  switch (band_mode) {
-    case 0:
-      sinensis_parameters.band_selector_mode = Sinensis::BandMode::LowHigh;
-      break;
-    case 1:
-      sinensis_parameters.band_selector_mode = Sinensis::BandMode::OddEven;
-      break;
-    case 2:
-      sinensis_parameters.band_selector_mode = Sinensis::BandMode::Peak;
-      break;
-  }
+
+  sinensis_parameters.midi_mode = static_cast<Sinensis::MidiMode>(midi_mode);
+
+  int band_mode =static_cast<float>(*parameters.getRawParameterValue("BANDMODE"));
+
+  sinensis_parameters.band_selector_mode = static_cast<Sinensis::BandMode>(band_mode);
+
 
   // if (*parameters.getRawParameterValue("LOWHIGH"))
   // sinensis_parameters.band_selector_mode = 0; else

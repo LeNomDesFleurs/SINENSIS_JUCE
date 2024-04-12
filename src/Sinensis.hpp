@@ -115,8 +115,8 @@ class Sinensis {
   noi::Filter::BPF m_bpf[6];
   float m_sampling_frequency;
   float m_Q[6];
-  float m_frequency[6];
-  float m_gain[6];
+  std::array<float, 6> m_frequency;
+  std::array<float, 6> m_gain;
   float m_attack_step;
   float m_decay_step;
   float m_envelope_statut[6];

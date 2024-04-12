@@ -9,8 +9,6 @@
 */
 #include "Sinensis.hpp"
 
-
-
 Sinensis::Sinensis() {
   m_parameters = {Sinensis::MidiMode::Off,
                   Sinensis::BandMode::LowHigh,
@@ -135,13 +133,14 @@ void Sinensis::computeFrequencyMidiOff() {
     }
 
     bool note_lock_on = false;
-    //check for note lock
+    // check for note lock
     int j = 0;
-    while (j<12 && !note_lock_on){
-        note_lock_on = m_parameters.note_lock[j] ? true : false;
-        j++;
+    while (j < 12 && !note_lock_on) {
+      note_lock_on = m_parameters.note_lock[j] ? true : false;
+      j++;
     }
-    //if not lock, skim through all frequencies until one is superior to actual frequency
+    // if not lock, skim through all frequencies until one is superior to actual
+    // frequency
     if (note_lock_on) {
       m_frequency[i] = noteLock(thisBandFreq);
       // else, keep the calculated band
@@ -151,15 +150,24 @@ void Sinensis::computeFrequencyMidiOff() {
   }
 }
 
-float Sinensis::noteLock(float frequency){
+float Sinensis::noteLock(float frequency) {
   for (int j = 0; j < 120; j++) {
-        int note = j % 12;
-        if (m_parameters.note_lock[note]) {
-          if (Tools::equal_temperament_frequencies[j] > frequency) {
-            return Tools::equal_temperament_frequencies[j];
-          }
-        }
+    int note = j % 12;
+    if (m_parameters.note_lock[note]) {
+      if (Tools::equal_temperament_frequencies[j] > frequency) {
+        return Tools::equal_temperament_frequencies[j];
       }
+    }
+  }
+  for (int j = 120; j > 0; j--) {
+    int note = j % 12;
+    if (m_parameters.note_lock[note]) {
+      if (Tools::equal_temperament_frequencies[j] < frequency) {
+        return Tools::equal_temperament_frequencies[j];
+      }
+    }
+  }
+  return 30;
 }
 
 void Sinensis::computeFrequencyMidiMono() {
