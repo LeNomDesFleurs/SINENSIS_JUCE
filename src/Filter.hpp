@@ -45,7 +45,7 @@ class BPF {
   BPF();
   BPF(float freq, float Q);
   // inline BPF() {}
-  void setSamplingFrequency(float sampling_frequency);
+  void setSampleRate(float sampling_frequency);
   void computeBiquadCoef();
 
   void setParam(float frequence, float Q);

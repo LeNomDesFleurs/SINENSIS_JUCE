@@ -10,16 +10,9 @@
 #include "Sinensis.hpp"
 
 Sinensis::Sinensis() {
-  m_parameters = {Sinensis::MidiMode::Off,
-                  Sinensis::BandMode::LowHigh,
-                  218.f,
-                  0.707f,
-                  0.f,
-                  1.5f,
-                  0.4f,
-                  0.4f};
-  m_sampling_frequency = 48000;
-  computeFrequencyMidiOff();
+  m_parameters = {Sinensis::BandMode::LowHigh, 218.f, 0.707f, 0.f, 1.5f, false};
+  m_sample_rate = 48000;
+  computeFrequencies();
   computeGain();
   computeQ();
   prepareBpf();
@@ -41,18 +34,13 @@ float Sinensis::processSample(float input) {
   return output;
 }
 
-float Sinensis::processSinensis(float input, juce::MidiBuffer& midi_buffer) {
-  switch (m_parameters.midi_mode) {
-    case Off:
-      prepareMidiOff();
-      break;
-    case Mono:
-      prepareMidiMono(midi_buffer);
-      break;
-    case Poly:
-      prepareMidiPoly(midi_buffer);
-      break;
-  }
+float Sinensis::processSinensis(float input) {
+
+  computeFrequencies();
+  computeGain();
+  computeQ();
+  prepareBpf();
+
   return processSample(input);
 }
 
@@ -64,16 +52,7 @@ void Sinensis::attenuate(float& input) {
 
 void Sinensis::saturate(float& input) {
   float max = 1.f;
-  // float threshold = 0.9;
-  // if ((input < -threshold && m_saturation_memory < -threshold) ||
-  //     (input > threshold && m_saturation_memory > threshold)) {
-  //   float slope =
-  //       input - m_saturation_memory;  // one sample period as unity time
-  //   float offset = input < 0.f ? -threshold : threshold;
-  //   slope *= 1.f - ((m_saturation_memory + offset) *
-  //                   10.f);  // higher input higher divider
-  //   input = m_saturation_memory + slope;
-  // }
+
   input = pow(input, 1. / 2.);
   // additionnal clipping
   if (input < -max) input = -max;
@@ -82,38 +61,7 @@ void Sinensis::saturate(float& input) {
   m_saturation_memory = input;
 }
 
-void Sinensis::prepareMidiOff() {
-  computeFrequencyMidiOff();
-  computeGain();
-  computeQ();
-  prepareBpf();
-}
-
-void Sinensis::prepareMidiMono(juce::MidiBuffer& midi_buffer) {
-  extractMidiMono(midi_buffer);
-  computeFrequencyMidiMono();
-  computeEnvelopesStep();
-  processEnvelopeMono();
-  computeGain();
-  for (int i = 0; i < 6; i++) {
-    m_gain[i] *= m_envelope_statut[0];
-  }
-  computeQ();
-  prepareBpf();
-}
-void Sinensis::prepareMidiPoly(juce::MidiBuffer& midi_buffer) {
-  extractMidiPoly(midi_buffer);
-  computeFrequencyMidiPoly();
-  computeEnvelopesStep();
-  for (int i = 0; i < 6; i++) {
-    processEnvelopePoly(i);
-    m_gain[i] = m_envelope_statut[i];
-  }
-  computeQ();
-  prepareBpf();
-}
-
-void Sinensis::computeFrequencyMidiOff() {
+void Sinensis::computeFrequencies() {
   std::array<float, 6> temp_frequency;
   for (int i = 0; i < 6; i++) {
     // multiply frequence by ratio
@@ -167,22 +115,7 @@ float Sinensis::noteLock(float frequency) {
       }
     }
   }
-  return 30;
-}
-
-void Sinensis::computeFrequencyMidiMono() {
-  if (m_notes.getLast() == 0) return;
-  m_parameters.root_frequency =
-      juce::MidiMessage::getMidiNoteInHertz(m_notes.getLast());
-  computeFrequencyMidiOff();
-}
-
-void Sinensis::computeFrequencyMidiPoly() {
-  for (int i = 0; i < 6; i++) {
-    if (m_notes[i] != 0) {
-      m_frequency[i] = juce::MidiMessage::getMidiNoteInHertz(m_notes[i]);
-    }
-  }
+  return 30.f;
 }
 
 void Sinensis::computeGain() {
@@ -253,29 +186,6 @@ void Sinensis::computePeak() {
   }
 }
 
-void Sinensis::processEnvelopePoly(int i) {
-  if (m_notes[i] == 0)
-    m_envelope_statut[i] -= m_decay_step;
-  else
-    m_envelope_statut[i] += m_attack_step;
-  if (m_envelope_statut[i] > 1) m_envelope_statut[i] = 1;
-  if (m_envelope_statut[i] < 0) m_envelope_statut[i] = 0;
-}
-
-void Sinensis::processEnvelopeMono() {
-  if (m_notes.getLast() == 0)
-    m_envelope_statut[0] -= m_decay_step;
-  else
-    m_envelope_statut[0] += m_attack_step;
-  if (m_envelope_statut[0] > 1) m_envelope_statut[0] = 1;
-  if (m_envelope_statut[0] < 0) m_envelope_statut[0] = 0;
-}
-
-void Sinensis::computeEnvelopesStep() {
-  m_attack_step = 1.f / (m_sampling_frequency * m_parameters.attack);
-  m_decay_step = 1.f / (m_sampling_frequency * m_parameters.decay);
-}
-
 void Sinensis::computeQ() {
   for (int i = 0; i < 6; i++) {
     float Q = (m_parameters.resonance * m_gain[i]) + 0.707f;
@@ -290,27 +200,7 @@ void Sinensis::prepareBpf() {
   }
 }
 
-void Sinensis::extractMidiMono(juce::MidiBuffer& midi_buffer) {
-  for (const auto metadata : midi_buffer) {
-    const auto msg = metadata.getMessage();
-    if (msg.isNoteOn())
-      m_notes.add(msg.getNoteNumber());
-    else if (msg.isNoteOff())
-      m_notes.removeValue(msg.getNoteNumber());
-  }
-}
-
-void Sinensis::extractMidiPoly(juce::MidiBuffer& midi_buffer) {
-  for (const auto metadata : midi_buffer) {
-    const auto msg = metadata.getMessage();
-    if (msg.isNoteOn())
-      m_notes.add(msg.getNoteNumber());
-    else if (msg.isNoteOff())
-      m_notes.removeValue(msg.getNoteNumber());
-  }
-}
-
-void Sinensis::setSamplingFrequency(float sampling_frequency) {
-  for (auto bpf : m_bpf) bpf.setSamplingFrequency(sampling_frequency);
-  m_sampling_frequency = sampling_frequency;
+void Sinensis::setSampleRate(float sample_rate) {
+  for (auto bpf : m_bpf) bpf.setSampleRate(sample_rate);
+  m_sample_rate = sample_rate;
 }

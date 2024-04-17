@@ -12,6 +12,7 @@
 
 #include "Filter.hpp"
 #include "Sinensis.hpp"
+#include "MidiBuffer.hpp"
 
 //==============================================================================
 /**
@@ -60,6 +61,11 @@ class SinensisAudioProcessor : public juce::AudioProcessor
   void getStateInformation(juce::MemoryBlock& destData) override;
   void setStateInformation(const void* data, int sizeInBytes) override;
   void setParam();
+  float processPoly(float input, int channel);
+  float processEnvelopePoly(int i);
+  void computeEnvelopesStep();
+  void computeFrequencyMidiPoly();
+  void extractMidiPoly(juce::MidiBuffer& midi_buffer);
 
   juce::AudioProcessorValueTreeState parameters;
 
@@ -67,16 +73,23 @@ class SinensisAudioProcessor : public juce::AudioProcessor
   //==============================================================================
   juce::AudioProcessorValueTreeState::ParameterLayout createParams();
 
-  Sinensis::Parameters sinensis_parameters{Sinensis::MidiMode::Off,
-                                           Sinensis::BandMode::LowHigh,
-                                           218.f,
-                                           0.707f,
-                                           0.5f,
-                                           1.5f,
-                                           0.4f,
-                                           0.4f,
-                                           0.5f};
-  Sinensis sinensis[2];
+  Sinensis::Parameters sinensis_parameters{
+      Sinensis::BandMode::LowHigh, 218.f, 0.707f, 0.5f, 1.5f, false};
+
+  std::array<std::array<Sinensis, 2>, 6> sinensis;
+
+  bool MidiOn;
+
+  float m_sample_rate;
+  float attack;
+  float decay;
+  float m_attack_step;
+  float m_decay_step;
+  float m_envelope_statut[6];
+  float drywet;
+  PolyMidiBuffer m_notes{6};
+  std::array<float, 6> root_frequencies;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SinensisAudioProcessor)
 };
+

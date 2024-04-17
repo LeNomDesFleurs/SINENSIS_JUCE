@@ -18,7 +18,7 @@ namespace Filter {
 BPF::BPF() {}
 BPF::BPF(float freq, float Q) { setParam(freq, Q); }
 //  BPF() {}
-void BPF::setSamplingFrequency(float sampling_frequency) {
+void BPF::setSampleRate(float sampling_frequency) {
   m_sampling_frequency = sampling_frequency;
 }
 void BPF::computeBiquadCoef() {

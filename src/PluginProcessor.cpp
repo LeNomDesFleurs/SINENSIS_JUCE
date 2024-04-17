@@ -80,10 +80,12 @@ void SinensisAudioProcessor::changeProgramName(int index,
 //==============================================================================
 void SinensisAudioProcessor::prepareToPlay(double sampleRate,
                                            int samplesPerBlock) {
-  for (int channel = 0; channel < 2; channel++) {
-    sinensis[channel].setSamplingFrequency(static_cast<float>(sampleRate));
-  }
-  // sinensis.setSamplingFrequency(static_cast <float> (sampleRate));
+  for (int voice = 0; voice < 6; voice++){
+    for (int channel = 0; channel < 2; channel++) {
+      sinensis[voice][channel].setSampleRate(static_cast<float>(sampleRate));
+    }}
+  m_sample_rate = static_cast<float>(sampleRate);
+  // sinensis.setSampleRate(static_cast <float> (sampleRate));
 }
 
 void SinensisAudioProcessor::releaseResources() {
@@ -127,6 +129,19 @@ void SinensisAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
 
   setParam();
 
+if (MidiOn){
+  extractMidiPoly(midiBuffer);
+  computeFrequencyMidiPoly();
+  computeEnvelopesStep();
+  for (int voice = 0; voice < 6; voice++) {
+    processEnvelopePoly(voice);
+    // m_envelope_statut[voice];
+    for (int channel = 0; channel < 2; channel++){
+      sinensis[voice][channel].setFrequency(root_frequencies[voice]);
+    }
+  }
+}
+
   for (auto channel = 0; channel < 2; ++channel) {
     // to access the sample in the channel as a C-style array
     auto channelSamples = buffer.getWritePointer(channel);
@@ -134,10 +149,55 @@ void SinensisAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     // for each sample in the channel
     for (auto n = 0; n < buffer.getNumSamples(); ++n) {
       const auto input = channelSamples[n];
-      channelSamples[n] = sinensis[channel].processSinensis(input, midiBuffer);
+        float output = 0;
+      if (MidiOn){
+        for (int voice = 0; voice < 6; voice++) {
+          output += sinensis[voice][channel].processSinensis(input)*m_envelope_statut[voice];
+        }
+      }
+      else {
+        output = sinensis[0][channel].processSinensis(input);
+      }
+      channelSamples[n] = Tools::equalGainCrossfade(channelSamples[n], output, drywet);
     }
   }
 }
+
+void SinensisAudioProcessor::extractMidiPoly(juce::MidiBuffer& midi_buffer) {
+  for (const auto metadata : midi_buffer) {
+    const auto msg = metadata.getMessage();
+    if (msg.isNoteOn())
+      m_notes.addNote(msg.getNoteNumber());
+    else if (msg.isNoteOff())
+      m_notes.removeNote(msg.getNoteNumber());
+  }
+}
+
+float SinensisAudioProcessor::processEnvelopePoly(int i) {
+  if (m_notes[i] == 0)
+    m_envelope_statut[i] -= m_decay_step;
+  else
+    m_envelope_statut[i] += m_attack_step;
+  if (m_envelope_statut[i] > 1) m_envelope_statut[i] = 1;
+  if (m_envelope_statut[i] < 0) m_envelope_statut[i] = 0;
+}
+
+void SinensisAudioProcessor::computeFrequencyMidiPoly() {
+  for (int i = 0; i < 6; i++) {
+    if (m_notes[i] != 0) {
+      root_frequencies[i] = juce::MidiMessage::getMidiNoteInHertz(m_notes[i]);
+    }
+  }
+}
+
+void SinensisAudioProcessor::computeEnvelopesStep() {
+  m_attack_step =(1.f / attack) / m_sample_rate;
+  m_decay_step = (1.f / decay) / m_sample_rate;
+}
+
+
+
+float processEnveloppe();
 
 //==============================================================================
 bool SinensisAudioProcessor::hasEditor() const {
@@ -168,15 +228,15 @@ juce::AudioProcessorValueTreeState::ParameterLayout
 SinensisAudioProcessor::createParams() {
   std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
 
-  params.push_back(std::make_unique<juce::AudioParameterChoice>(
-      "MIDIMODE", "Midi Mode", juce::StringArray{"off", "mono", "poly"}, 0));
+  params.push_back(std::make_unique<juce::AudioParameterBool>(
+      "MIDIMODE", "MIDIMODE", false));
   params.push_back(std::make_unique<juce::AudioParameterChoice>(
       "BANDMODE", "Band Selector Mode",
       juce::StringArray{"Low/High", "Odd/Even", "Peak"}, 0));
 
   params.push_back(std::make_unique<juce::AudioParameterFloat>(
       "root_frequency", "Root Frequency",
-      juce::NormalisableRange{20.f, 15000.f, 0.1f, 0.2f, false}, 500.f)),
+      juce::NormalisableRange{20.f, 15000.f, 0.1f, 0.1f, false}, 500.f)),
 
       params.push_back(std::make_unique<juce::AudioParameterFloat>(
           "RATIO", "Ratio", juce::NormalisableRange{0.5f, 2.0f, 0.001f}, 1.5f));
@@ -192,47 +252,51 @@ SinensisAudioProcessor::createParams() {
       juce::NormalisableRange{0.0f, 2.0f, 0.01f}, 0.6f));
 
   params.push_back(std::make_unique<juce::AudioParameterFloat>(
-      "ATTACK", "Attack", juce::NormalisableRange<float>{0.1f, 3.0f, 0.1f},
+      "ATTACK", "Attack", juce::NormalisableRange<float>{0.0001f, 3.0f, 0.0001f, 2.f, false},
       0.4f));
   params.push_back(std::make_unique<juce::AudioParameterFloat>(
-      "DECAY", "Decay", juce::NormalisableRange<float>{0.1f, 3.0f, 0.1f},
+      "DECAY", "Decay", juce::NormalisableRange<float>{0.0001f, 3.0f, 0.0001f, 2.f, false},
       0.4f));
+  params.push_back(std::make_unique<juce::AudioParameterFloat>(
+      "DRYWET", "DryWet", juce::NormalisableRange<float>{0.f, 1.0f, 0.0001f, 1.f, false},
+      1.f));
 
   params.push_back(std::make_unique<juce::AudioParameterBool>("C", "C", false));
-  params.push_back(std::make_unique<juce::AudioParameterBool>("CSHARP", "CSHARP", false));
+  params.push_back(
+      std::make_unique<juce::AudioParameterBool>("CSHARP", "CSHARP", false));
   params.push_back(std::make_unique<juce::AudioParameterBool>("D", "D", false));
-  params.push_back(std::make_unique<juce::AudioParameterBool>("DSHARP", "DSHARP", false));
+  params.push_back(
+      std::make_unique<juce::AudioParameterBool>("DSHARP", "DSHARP", false));
   params.push_back(std::make_unique<juce::AudioParameterBool>("E", "E", false));
   params.push_back(std::make_unique<juce::AudioParameterBool>("F", "F", false));
-  params.push_back(std::make_unique<juce::AudioParameterBool>("FSHARP", "FSHARP", false));
+  params.push_back(
+      std::make_unique<juce::AudioParameterBool>("FSHARP", "FSHARP", false));
   params.push_back(std::make_unique<juce::AudioParameterBool>("G", "G", false));
-  params.push_back(std::make_unique<juce::AudioParameterBool>("GSHARP", "GSHARP", false));
+  params.push_back(
+      std::make_unique<juce::AudioParameterBool>("GSHARP", "GSHARP", false));
   params.push_back(std::make_unique<juce::AudioParameterBool>("A", "A", false));
-  params.push_back(std::make_unique<juce::AudioParameterBool>("ASHARP", "ASHARP", false));
+  params.push_back(
+      std::make_unique<juce::AudioParameterBool>("ASHARP", "ASHARP", false));
   params.push_back(std::make_unique<juce::AudioParameterBool>("B", "B", false));
 
   return {params.begin(), params.end()};
 }
 
 void SinensisAudioProcessor::setParam() {
-  int midi_mode =
-      static_cast<float>(*parameters.getRawParameterValue("MIDIMODE"));
-
-  sinensis_parameters.midi_mode = static_cast<Sinensis::MidiMode>(midi_mode);
-
-  int band_mode =static_cast<float>(*parameters.getRawParameterValue("BANDMODE"));
-
-  sinensis_parameters.band_selector_mode = static_cast<Sinensis::BandMode>(band_mode);
+  MidiOn =
+      static_cast<float>(*parameters.getRawParameterValue("MIDIMODE")) > 0.5;
 
 
-  // if (*parameters.getRawParameterValue("LOWHIGH"))
-  // sinensis_parameters.band_selector_mode = 0; else
-  // if(*parameters.getRawParameterValue("ODDEVEN"))
-  // sinensis_parameters.band_selector_mode = 1; else
-  // sinensis_parameters.band_selector_mode = 2;
+  int band_mode =
+      static_cast<float>(*parameters.getRawParameterValue("BANDMODE"));
+
+  sinensis_parameters.band_selector_mode =
+      static_cast<Sinensis::BandMode>(band_mode);
+
   // PARAM
   sinensis_parameters.root_frequency =
       *parameters.getRawParameterValue("root_frequency");
+
   sinensis_parameters.ratio = *parameters.getRawParameterValue("RATIO");
   sinensis_parameters.resonance = *parameters.getRawParameterValue("RESONANCE");
   sinensis_parameters.band_selector =
@@ -240,25 +304,46 @@ void SinensisAudioProcessor::setParam() {
   sinensis_parameters.output_volume =
       *parameters.getRawParameterValue("OUTPUTVOLUME");
   // ENVELOPPE
-  sinensis_parameters.attack = *parameters.getRawParameterValue("ATTACK");
-  sinensis_parameters.decay = *parameters.getRawParameterValue("DECAY");
+  attack = *parameters.getRawParameterValue("ATTACK");
+  decay = *parameters.getRawParameterValue("DECAY");
+  drywet = *parameters.getRawParameterValue("DRYWET");
 
-  sinensis_parameters.note_lock[0]= *parameters.getRawParameterValue("C")>0.5;
-  sinensis_parameters.note_lock[1]= *parameters.getRawParameterValue("CSHARP")>0.5;
-  sinensis_parameters.note_lock[2]= *parameters.getRawParameterValue("D")>0.5;
-  sinensis_parameters.note_lock[3]= *parameters.getRawParameterValue("DSHARP")>0.5;
-  sinensis_parameters.note_lock[4]= *parameters.getRawParameterValue("E")>0.5;
-  sinensis_parameters.note_lock[5]= *parameters.getRawParameterValue("F")>0.5;
-  sinensis_parameters.note_lock[6]= *parameters.getRawParameterValue("FSHARP")>0.5;
-  sinensis_parameters.note_lock[7]= *parameters.getRawParameterValue("G")>0.5;
-  sinensis_parameters.note_lock[8]= *parameters.getRawParameterValue("GSHARP")>0.5;
-  sinensis_parameters.note_lock[9]= *parameters.getRawParameterValue("A")>0.5;
-  sinensis_parameters.note_lock[10]= *parameters.getRawParameterValue("ASHARP")>0.5;
-  sinensis_parameters.note_lock[11]= *parameters.getRawParameterValue("B")>0.5;
+  sinensis_parameters.note_lock[0] =
+      *parameters.getRawParameterValue("C") > 0.5;
+  sinensis_parameters.note_lock[1] =
+      *parameters.getRawParameterValue("CSHARP") > 0.5;
+  sinensis_parameters.note_lock[2] =
+      *parameters.getRawParameterValue("D") > 0.5;
+  sinensis_parameters.note_lock[3] =
+      *parameters.getRawParameterValue("DSHARP") > 0.5;
+  sinensis_parameters.note_lock[4] =
+      *parameters.getRawParameterValue("E") > 0.5;
+  sinensis_parameters.note_lock[5] =
+      *parameters.getRawParameterValue("F") > 0.5;
+  sinensis_parameters.note_lock[6] =
+      *parameters.getRawParameterValue("FSHARP") > 0.5;
+  sinensis_parameters.note_lock[7] =
+      *parameters.getRawParameterValue("G") > 0.5;
+  sinensis_parameters.note_lock[8] =
+      *parameters.getRawParameterValue("GSHARP") > 0.5;
+  sinensis_parameters.note_lock[9] =
+      *parameters.getRawParameterValue("A") > 0.5;
+  sinensis_parameters.note_lock[10] =
+      *parameters.getRawParameterValue("ASHARP") > 0.5;
+  sinensis_parameters.note_lock[11] =
+      *parameters.getRawParameterValue("B") > 0.5;
 
   // SET OBJECT
-  sinensis[0].setParameters(sinensis_parameters);
-  sinensis[1].setParameters(sinensis_parameters);
+  sinensis[0][0].setParameters(sinensis_parameters);
+  sinensis[0][1].setParameters(sinensis_parameters);
+
+  if (MidiOn) {
+    for (int voice = 1; voice < 6; voice++) {
+      for (int channel = 0; channel < 2; channel++) {
+        sinensis[voice][channel].setParameters(sinensis_parameters);
+      }
+    }
+  }
 }
 
 // This creates new instances of the plugin..

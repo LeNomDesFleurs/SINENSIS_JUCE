@@ -66,6 +66,7 @@ class SinensisAudioProcessorEditor
   AttackLookAndFeel attack_look_and_feel;
   DecayLookAndFeel decay_look_and_feel;
   EmptyLookAndFeel empty_look_and_feel;
+  DryWetLookAndFeel dry_wet_look_and_feel;
 
   SinensisAudioProcessor& audioProcessor;
 
@@ -77,10 +78,10 @@ class SinensisAudioProcessorEditor
   // SLIDER
 
   juce::Slider BandSelectorSlider, ratioSlider, QSlider, cutoffFrequencySlider,
-      attackSlider, decaySlider;
+      attackSlider, decaySlider, dryWetSlider;
   std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>
       BandSelectorAttachement, ratioAttachement, cutoffFrequencyAttachement,
-      attackAttachement, decayAttachement, QAttachement;
+      attackAttachement, decayAttachement, QAttachement, dryWetAttachment;
 
   // BUTTON
   juce::ToggleButton lowHighButton{"L | H"}, oddEvenButton{"O | E"},
@@ -89,10 +90,9 @@ class SinensisAudioProcessorEditor
       lowHighButtonAttachement, oddEvenButtonAttachement, peakButtonAttachement;
 
   // BUTTON
-  juce::ToggleButton midiOffButton{"Off"}, midiMonoButton{"Mono"},
-      midiPolyButton{"Poly"};
+  juce::ToggleButton
+      midiPolyButton{"MIDI"};
   std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>
-      midiOffButtonAttachement, midiMonoButtonAttachement,
       midiPolyButtonAttachement;
 
 
@@ -119,12 +119,13 @@ std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>
 //   float band_selector;
 //   float root_frequency;
   bool background_generated = false;
-//   float m_frequency[6];
-//   bool note_lock[12];
+  bool midi_mode = false;
+  //   float m_frequency[6];
+  //   bool note_lock[12];
 
-//   std::array<float, 6> gains;
-//   Sinensis::BandMode band_selector_mode = Sinensis::BandMode::LowHigh;
-//   Sinensis::MidiMode midi_mode;
+  //   std::array<float, 6> gains;
+  //   Sinensis::BandMode band_selector_mode = Sinensis::BandMode::LowHigh;
+  //   Sinensis::MidiMode midi_mode;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SinensisAudioProcessorEditor)
 };

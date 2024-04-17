@@ -3,23 +3,27 @@
 ## 🖼️ UI
 
 -   [ ] charte d'épaisseur des traits ?
+-   [ ] finish dry wet slider
 
 ## 🛠️ Functionality
 
 -   [ ] changer la courbe de la root frequency
--   [ ] Rework poly mode to allow 6x6 filter band
--   [ ] Lock note
 -   [ ] Rework to resonance gain attenuation to feel the volume increase
--   [ ] Q->0 = Dry signal
 -   [ ] pitch wheel
+-   [ ] baisser l'attaque minimale
+-   [ ] add dry wet cross fade to processor
 
 ## ⚙️ Optimization
 
 -   [ ] limit band control widget refresh to certain parameter
+-   [ ] limit frequency and gain calculation to parameter modification
 
 ## 🪲 Bug
 
 -   [ ] jump in band select ui at beginning
+-   [ ] put the feedback saturation in the correct file
+-   [ ] attack and decay not working properly
+-   [ ] incorrect management of midi note, the note must be kept to the same voice
 
 ## Other
 
@@ -27,6 +31,11 @@
 
 ## Dump
 
+-   [-] Q->0 = Dry signal
+-   [x] Rework poly mode to allow 6x6 filter band
+-   [x] Only one voice receiveing the correct parameters
+      `not the good function call, processSinensis / processSample`
+-   [x] Lock note
 -   [x] bug in note lock max value, clip to max note in ui in dsp
 -   [x] cutoff widget not appearing anymore
 -   [x] piano widget pour lock note

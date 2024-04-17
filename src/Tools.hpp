@@ -1,6 +1,11 @@
 #pragma once
 
+#include <cmath>
+
 namespace Tools{
+
+float linearCrossfade(float dry, float wet, float parameter);
+float equalGainCrossfade(float dry, float wet, float parameter);
 
 const float equal_temperament_frequencies[120] = {
     16.351,    17.324,    18.354,   19.445,    20.601,    21.827,   23.124,

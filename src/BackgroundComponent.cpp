@@ -10,8 +10,9 @@ void BackgroundComponent::paint(juce::Graphics& g) {
   int width = 260;
   int border_size = 1;
   int corner_size = 5;
+  int half_width = 127;
 
-  int sizes[5] = {100, 80, 80, 80, 100};
+  int sizes[5] = {100, 80, 40, 80, 100};
   // vertical position of the first block
   int y_position = 75;
 
@@ -22,7 +23,14 @@ void BackgroundComponent::paint(juce::Graphics& g) {
     int y = y_position - border_size;
     int w = width + border_size * 2;
     int h = sizes[i] + border_size * 2;
+    if (i == 1){
+    g.fillRoundedRectangle(x, y, half_width, h, corner_size);
+    // x = left_margin - border_size
+    g.fillRoundedRectangle(154, y, half_width, h, corner_size);
+    }
+    else {
     g.fillRoundedRectangle(x, y, w, h, corner_size);
+    }
 
     if (i == 0 || i == 4) {
       g.setColour(CustomColors::green);
@@ -31,9 +39,20 @@ void BackgroundComponent::paint(juce::Graphics& g) {
       g.setColour(CustomColors::blue);
     }
 
+    if(i==1){
+      g.fillRoundedRectangle(left_margin, y_position, 125, sizes[i],
+                           corner_size);
+      g.fillRoundedRectangle(155, y_position, 125, sizes[i],
+                           corner_size);
+    //   g.fillRoundedRectangle(x+1, y+1, (w/2)-7, h-2, corner_size);
+    // g.fillRoundedRectangle(x+w/2, y+1, (w/2)-5, h-2, corner_size);
+    // g.fillRoundedRectangle(x, y, w, h, corner_size);
+    // g.fillRoundedRectangle(x, y, w, h, corner_size);
+    }
+    else {
     g.fillRoundedRectangle(left_margin, y_position, width, sizes[i],
                            corner_size);
-
+    }
     y_position += sizes[i];
     // vetical margin between block
     y_position += 10;
@@ -44,6 +63,8 @@ void BackgroundComponent::paint(juce::Graphics& g) {
   g.setFont(juce::Font("Times New Roman", 60.0f, juce::Font::italic));
   g.drawFittedText("Sinensis", 0, -10, getWidth(), 80,
                    juce::Justification::centred, 1);
+
+
 }
 
 juce::Path BackgroundComponent::paintMotif(int size_x, int size_y,

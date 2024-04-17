@@ -15,113 +15,58 @@
 #include "JuceHeader.h"
 #include "Tools.hpp"
 
-class MonoMidiNote {
- private:
-  std::vector<int> m_note = {};
-
- public:
-  MonoMidiNote() { m_note.push_back(0); }
-
-  int getNote() { return m_note.back(); }
-
-  void addNote(int note) { m_note.push_back(note); }
-  bool noteIsNew(int note) {
-    for (auto note_iterator : m_note) {
-      if (note_iterator == note) return false;
-    }
-    return true;
-  }
-  void eraseNote(int note) {
-    for (std::vector<int>::iterator it = m_note.begin(); it != m_note.end();
-         it++) {
-      if (*it == note) {
-        it = m_note.erase(it);
-        return;
-      }
-    }
-  }
-  void computeMidi(juce::MidiBuffer& midi_buffer) {
-    for (const auto metadata : midi_buffer) {
-      const auto msg = metadata.getMessage();
-      if (msg.isNoteOn()) {
-        if (noteIsNew(msg.getNoteNumber())) addNote(msg.getNoteNumber());
-      } else if (msg.isNoteOff())
-        eraseNote(msg.getNoteNumber());
-    }
-  }
-};
-
 class Sinensis {
  public:
-  enum MidiMode { Off, Mono, Poly };
   enum BandMode { LowHigh, OddEven, Peak };
-  ///< summary> Parameters of Sinensis </summary>
-  /// <param name = "frequency"> </param>
-  /// @param float Q
+  ///Parameters of Sinensis
+  /// @param BandMode band_mode_selector
+  /// @param float root_frequency
+  /// @param float resonance
   /// @param float band_selector
   /// @param float ratio
-  /// @param bool gain_Q_link
-  /// @param float band_selector_mode
+  /// @param bool noteLock[12]
   struct Parameters {
-    MidiMode midi_mode;
     BandMode band_selector_mode;
     float root_frequency;
     float resonance;
     float band_selector;
     float ratio;
-    float attack;
-    float decay;
     float output_volume;
-    bool note_lock[12];
-
+    std::array<bool, 12> note_lock;
   };
-
-  
-
 
   Sinensis();
   ~Sinensis();
   void setParameters(Sinensis::Parameters parameters);
+  void setFrequency(float frequency){
+    m_parameters.root_frequency = frequency;
+  }
   float processSample(float input);
-  float processSinensis(float input, juce::MidiBuffer& midi_buffer);
+  float processSinensis(float input);
   void attenuate(float& input);
   void saturate(float& input);
-  void prepareMidiOff();
-  void prepareMidiMono(juce::MidiBuffer& midi_buffer);
-  void prepareMidiPoly(juce::MidiBuffer& midi_buffer);
   float noteLock(float frequency);
 
   void computeGain();
   void computeLowHigh();
   void computeOddEven();
   void computePeak();
-  void processEnvelopePoly(int envelope_index);
-  void processEnvelopeMono();
-  void computeEnvelopesStep();
+
 
   void computeQ();
   void prepareBpf();
-  void computeFrequencyMidiOff();
-  void computeFrequencyMidiMono();
-  void computeFrequencyMidiPoly();
+  void computeFrequencies();
 
-  void extractMidiMono(juce::MidiBuffer& midi_buffer);
-  void extractMidiPoly(juce::MidiBuffer& midi_buffer);
-
-  void setSamplingFrequency(float sampling_frequency);
-
+  void setSampleRate(float sample_rate);
 
   Sinensis::Parameters m_parameters;
   noi::Filter::BPF m_bpf[6];
-  float m_sampling_frequency;
+  float m_sample_rate;
   float m_Q[6];
+ 
   std::array<float, 6> m_frequency;
   std::array<float, 6> m_gain;
-  float m_attack_step;
-  float m_decay_step;
-  float m_envelope_statut[6];
+
   float m_saturation_memory;
   // int m_notes[6];
-  juce::SortedSet<int> m_notes;
-  MonoMidiNote monophonic_midi_buffer;
 };
