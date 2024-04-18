@@ -142,8 +142,7 @@ if (MidiOn){
   }
 }
 
-test_counter++;
-if (test_counter > m_sample_rate) test_counter = 0;
+
 
 
 for (auto channel = 0; channel < 2; ++channel) {
@@ -162,6 +161,7 @@ for (auto channel = 0; channel < 2; ++channel) {
     } else {
       output = sinensis[0][channel].processSinensis(input);
     }
+    output *= 0.2;
     channelSamples[n] =
         Tools::equalGainCrossfade(channelSamples[n], output, drywet);
   }
@@ -175,15 +175,18 @@ void SinensisAudioProcessor::extractMidiPoly(juce::MidiBuffer& midi_buffer) {
       m_notes.addNote(msg.getNoteNumber());
     else if (msg.isNoteOff())
       m_notes.removeNote(msg.getNoteNumber());
+    else if (msg.isPitchWheel()){
+    pitch_bend=((float)msg.getPitchWheelValue()- 8192.f)/8192.f;
+    }
   }
 }
 
 void SinensisAudioProcessor::processEnvelopePoly(int i) {
   if (m_notes[i] == 0)
     {
-    m_envelope_statut[i] = m_envelope_statut[i] - m_decay_step;
+    m_envelope_statut[i] -= m_decay_step;
   } else {
-    m_envelope_statut[i] = m_envelope_statut[i] + m_attack_step;
+    m_envelope_statut[i] += m_attack_step;
   }
 
   if (m_envelope_statut[i] > 1.) m_envelope_statut[i] = 1.;
@@ -191,16 +194,23 @@ void SinensisAudioProcessor::processEnvelopePoly(int i) {
 }
 
 void SinensisAudioProcessor::computeFrequencyMidiPoly() {
+  double offset = 0;
+  if (pitch_bend < 0) {
+    offset = 48 * pitch_bend;
+  } else {
+    offset = 53.88 * pitch_bend;
+  }
   for (int i = 0; i < 6; i++) {
     if (m_notes[i] != 0) {
-      root_frequencies[i] = juce::MidiMessage::getMidiNoteInHertz(m_notes[i]);
+      //using the A position to apply the pitch bend, 2 semitone of amplitude
+      root_frequencies[i] = juce::MidiMessage::getMidiNoteInHertz(m_notes[i], offset+440.);
     }
   }
 }
 
 void SinensisAudioProcessor::computeEnvelopesStep() {
-  m_attack_step =(1000.f / (attack * m_sample_rate)) ;
-  m_decay_step = (1000.f / (decay * m_sample_rate)) ;
+  m_attack_step =(100.f / (attack * m_sample_rate)) ;
+  m_decay_step = (100.f / (decay * m_sample_rate)) ;
 }
 
 
@@ -237,9 +247,9 @@ SinensisAudioProcessor::createParams() {
   std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
 
   params.push_back(std::make_unique<juce::AudioParameterBool>(
-      "MIDIMODE", "MIDIMODE", false));
+      "MIDIMODE", "MIDI", false));
   params.push_back(std::make_unique<juce::AudioParameterChoice>(
-      "BANDMODE", "Band Selector Mode",
+      "BANDMODE", "Band Mode",
       juce::StringArray{"Low/High", "Odd/Even", "Peak"}, 0));
 
   params.push_back(std::make_unique<juce::AudioParameterFloat>(
@@ -253,38 +263,38 @@ SinensisAudioProcessor::createParams() {
       "RESONANCE", "Resonance", juce::NormalisableRange{0.7f, 100.0f, 0.1f},
       20.0f));
   params.push_back(std::make_unique<juce::AudioParameterFloat>(
-      "band_selector", "Number Of Band",
+      "band_selector", "Band Selector",
       juce::NormalisableRange{0.0f, 1.0f, 0.01f}, 0.3f));
-  params.push_back(std::make_unique<juce::AudioParameterFloat>(
-      "OUTPUTVOLUME", "Ouput Volume",
-      juce::NormalisableRange{0.0f, 2.0f, 0.01f}, 0.6f));
+  // params.push_back(std::make_unique<juce::AudioParameterFloat>(
+  //     "OUTPUTVOLUME", "Ouput Volume",
+  //     juce::NormalisableRange{0.0f, 2.0f, 0.01f}, 0.6f));
 
   params.push_back(std::make_unique<juce::AudioParameterFloat>(
-      "ATTACK", "Atttack", juce::NormalisableRange<float>{0.0001f, 3.0f, 0.0001f, 0.5f, false},
+      "ATTACK", "Attack", juce::NormalisableRange<float>{0.0001f, 5.0f, 0.0001f, 0.5f, false},
       0.4f));
   params.push_back(std::make_unique<juce::AudioParameterFloat>(
-      "DECAY", "Decay", juce::NormalisableRange<float>{0.0001f, 3.0f, 0.0001f, 0.5f, false},
+      "DECAY", "Release", juce::NormalisableRange<float>{0.0001f, 5.0f, 0.0001f, 0.5f, false},
       0.4f));
   params.push_back(std::make_unique<juce::AudioParameterFloat>(
-      "DRYWET", "DryWet", juce::NormalisableRange<float>{0.f, 1.0f, 0.0001f, 1.f, false},
+      "DRYWET", "Dry/Wet", juce::NormalisableRange<float>{0.f, 1.0f, 0.0001f, 1.f, false},
       1.f));
 
   params.push_back(std::make_unique<juce::AudioParameterBool>("C", "C", false));
   params.push_back(
-      std::make_unique<juce::AudioParameterBool>("CSHARP", "CSHARP", false));
+      std::make_unique<juce::AudioParameterBool>("CSHARP", "C#", false));
   params.push_back(std::make_unique<juce::AudioParameterBool>("D", "D", false));
   params.push_back(
-      std::make_unique<juce::AudioParameterBool>("DSHARP", "DSHARP", false));
+      std::make_unique<juce::AudioParameterBool>("DSHARP", "D#", false));
   params.push_back(std::make_unique<juce::AudioParameterBool>("E", "E", false));
   params.push_back(std::make_unique<juce::AudioParameterBool>("F", "F", false));
   params.push_back(
-      std::make_unique<juce::AudioParameterBool>("FSHARP", "FSHARP", false));
+      std::make_unique<juce::AudioParameterBool>("FSHARP", "F#", false));
   params.push_back(std::make_unique<juce::AudioParameterBool>("G", "G", false));
   params.push_back(
-      std::make_unique<juce::AudioParameterBool>("GSHARP", "GSHARP", false));
+      std::make_unique<juce::AudioParameterBool>("GSHARP", "G#", false));
   params.push_back(std::make_unique<juce::AudioParameterBool>("A", "A", false));
   params.push_back(
-      std::make_unique<juce::AudioParameterBool>("ASHARP", "ASHARP", false));
+      std::make_unique<juce::AudioParameterBool>("ASHARP", "A#", false));
   params.push_back(std::make_unique<juce::AudioParameterBool>("B", "B", false));
 
   return {params.begin(), params.end()};

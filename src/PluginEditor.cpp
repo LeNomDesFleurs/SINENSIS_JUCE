@@ -300,20 +300,8 @@ void SinensisAudioProcessorEditor::parameterValueChanged(int parameterIndex,
   switch (parameterIndex) {
     case 0:
       midi_mode = newValue > 0.5;
-      break;
-    // case 1:
-    //   break;
-    case 2:
-      // editorSinensis.m_parameters.root_frequency = newValue;
-      break;
-    case 5:
-      // editorSinensis.m_parameters.band_selector = newValue;
-      break;
-    case 3:
-      // editorSinensis.m_parameters.ratio = (newValue * 1.5) + 0.5;
-      break;
   }
-  int index_start = 10;
+  int index_start = 9;
   for (int i = 0; i < 12; i++) {
     if (parameterIndex == i + index_start) {
       note_lock[i] = newValue > 0.5;

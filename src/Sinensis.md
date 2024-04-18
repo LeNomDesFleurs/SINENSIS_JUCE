@@ -2,12 +2,9 @@
 
 ## 🖼️ UI
 
--   [ ] charte d'épaisseur des traits ?
 
 ## 🛠️ Functionality
 
--   [ ] pitch wheel
--   [ ] baisser l'attaque minimale
 -   [ ] lower volume a bit
 
 ## ⚙️ Optimization
@@ -15,11 +12,6 @@
 -   [ ] limit band control widget refresh to certain parameter
 
 ## 🪲 Bug
--   [x] ratio don't update root freq
--   [ ] envelope not working
--   [x] root freq in midi not working
--   [ ] attack and decay not working properly
--   [ ] incorrect management of midi note, the note must be kept to the same voice
 
 ## Other
 
@@ -27,7 +19,15 @@
 
 ## Dump
 
+-   [x] envelope not working
+-   [x] incorrect management of midi note, the note must be kept to the same voice
+-   [-] charte d'épaisseur des traits ?
+-   [x] baisser l'attaque minimale
+-   [x] pitch wheel
+-   [x] attack and decay not working properly
 -   [x] ~~changer la courbe de la root frequency~~
+-   [x] root freq in midi not working
+-   [x] ratio don't update root freq
 -   [x] put the feedback saturation in the correct file
 -   [x] ~~limit frequency and gain calculation to parameter modification~~
 -   [x] note lock don't update frequency bands

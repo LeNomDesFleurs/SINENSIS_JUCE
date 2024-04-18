@@ -21,7 +21,7 @@ juce_add_plugin(Sinensis
     IS_SYNTH FALSE                       # Is this a synth or an effect?
     NEEDS_MIDI_INPUT TRUE               # Does the plugin need midi input?
     NEEDS_MIDI_OUTPUT FALSE              # Does the plugin need midi output?
-    JUCE_VST_NUM_MIDI_INS 1
+    VST_NUM_MIDI_INS 1
     # IS_MIDI_EFFECT TRUE                # Is this plugin a MIDI effect?
     # EDITOR_WANTS_KEYBOARD_FOCUS TRUE/FALSE    # Does the editor need keyboard focus?
     COPY_PLUGIN_AFTER_BUILD TRUE        # Should the plugin be installed to a default location after building?
@@ -36,10 +36,10 @@ juce_add_plugin(Sinensis
             # Unity 
             ${AAX_BUILD_FLAG}               
     VST3_CATEGORIES "Fx" 
-    AU_MAIN_TYPE "kAudioUnitType_Effect"
+    AU_MAIN_TYPE "kAudioUnitType_MusicEffect"
     # AU_SANDBOX_SAFE TRUE
     # AAX_CATEGORY ""
-    # HARDENED_RUNTIME_ENABLED # macOS app settings
+     HARDENED_RUNTIME_ENABLED TRUE # macOS app settings
     # HARDENED_RUNTIME_OPTIONS
     # APP_SANDBOX_ENABLED
     # APP_SANDBOX_INHERIT

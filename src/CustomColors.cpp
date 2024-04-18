@@ -17,6 +17,7 @@ juce::Colour CustomColors::getGradient(float value) {
     value *= 3;
     return CustomColors::orange.interpolatedWith(CustomColors::red, value);
   }
+  return CustomColors::black;
 }
 
 /// @brief Gradient without green to avoid diseapearing widget on the wrong

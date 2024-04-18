@@ -86,10 +86,10 @@ class SinensisAudioProcessor : public juce::AudioProcessor
   float decay;
   float m_attack_step;
   float m_decay_step;
-  std::array <float, 6> m_envelope_statut;
+  float pitch_bend;
+  std::array<float, 6> m_envelope_statut;
   float drywet;
 
-  int test_counter;
   PolyMidiBuffer m_notes{6};
   std::array<float, 6> root_frequencies;
 

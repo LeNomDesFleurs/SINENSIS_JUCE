@@ -94,7 +94,7 @@ void updateParameters(float input) {}
 
 void Sinensis::attenuate(float& input) {
   // input *= m_parameters.output_volume;
-  input *= 0.9;
+  input *= 0.8;
   input *= 1 - (pow(m_parameters.resonance / 200, 0.5) / 1.5);
 }
 
