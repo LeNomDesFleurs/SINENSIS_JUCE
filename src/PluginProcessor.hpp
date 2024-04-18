@@ -13,6 +13,7 @@
 #include "Filter.hpp"
 #include "Sinensis.hpp"
 #include "MidiBuffer.hpp"
+#include "Tools.hpp"
 
 //==============================================================================
 /**
@@ -61,8 +62,8 @@ class SinensisAudioProcessor : public juce::AudioProcessor
   void getStateInformation(juce::MemoryBlock& destData) override;
   void setStateInformation(const void* data, int sizeInBytes) override;
   void setParam();
-  float processPoly(float input, int channel);
-  float processEnvelopePoly(int i);
+  // float processPoly(float input, int channel);
+  void processEnvelopePoly(int i);
   void computeEnvelopesStep();
   void computeFrequencyMidiPoly();
   void extractMidiPoly(juce::MidiBuffer& midi_buffer);
@@ -85,8 +86,10 @@ class SinensisAudioProcessor : public juce::AudioProcessor
   float decay;
   float m_attack_step;
   float m_decay_step;
-  float m_envelope_statut[6];
+  std::array <float, 6> m_envelope_statut;
   float drywet;
+
+  int test_counter;
   PolyMidiBuffer m_notes{6};
   std::array<float, 6> root_frequencies;
 

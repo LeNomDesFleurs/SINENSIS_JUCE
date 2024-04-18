@@ -124,8 +124,8 @@ void SinensisAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
   juce::ScopedNoDenormals noDenormals;
   auto totalNumInputChannels = getTotalNumInputChannels();
   auto totalNumOutputChannels = getTotalNumOutputChannels();
-  for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-    buffer.clear(i, 0, buffer.getNumSamples());
+  for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i){
+    buffer.clear(i, 0, buffer.getNumSamples());}
 
   setParam();
 
@@ -142,24 +142,29 @@ if (MidiOn){
   }
 }
 
-  for (auto channel = 0; channel < 2; ++channel) {
-    // to access the sample in the channel as a C-style array
-    auto channelSamples = buffer.getWritePointer(channel);
+test_counter++;
+if (test_counter > m_sample_rate) test_counter = 0;
 
-    // for each sample in the channel
-    for (auto n = 0; n < buffer.getNumSamples(); ++n) {
-      const auto input = channelSamples[n];
-        float output = 0;
-      if (MidiOn){
-        for (int voice = 0; voice < 6; voice++) {
-          output += sinensis[voice][channel].processSinensis(input)*m_envelope_statut[voice];
-        }
+
+for (auto channel = 0; channel < 2; ++channel) {
+  // to access the sample in the channel as a C-style array
+  auto channelSamples = buffer.getWritePointer(channel);
+
+  // for each sample in the channel
+  for (auto n = 0; n < buffer.getNumSamples(); ++n) {
+    const auto input = channelSamples[n];
+    float output = 0;
+    if (MidiOn) {
+      for (int voice = 0; voice < 6; voice++) {
+        output += sinensis[voice][channel].processSinensis(input) *
+                  pow(m_envelope_statut[voice], 2);
       }
-      else {
-        output = sinensis[0][channel].processSinensis(input);
-      }
-      channelSamples[n] = Tools::equalGainCrossfade(channelSamples[n], output, drywet);
+    } else {
+      output = sinensis[0][channel].processSinensis(input);
     }
+    channelSamples[n] =
+        Tools::equalGainCrossfade(channelSamples[n], output, drywet);
+  }
   }
 }
 
@@ -173,13 +178,16 @@ void SinensisAudioProcessor::extractMidiPoly(juce::MidiBuffer& midi_buffer) {
   }
 }
 
-float SinensisAudioProcessor::processEnvelopePoly(int i) {
+void SinensisAudioProcessor::processEnvelopePoly(int i) {
   if (m_notes[i] == 0)
-    m_envelope_statut[i] -= m_decay_step;
-  else
-    m_envelope_statut[i] += m_attack_step;
-  if (m_envelope_statut[i] > 1) m_envelope_statut[i] = 1;
-  if (m_envelope_statut[i] < 0) m_envelope_statut[i] = 0;
+    {
+    m_envelope_statut[i] = m_envelope_statut[i] - m_decay_step;
+  } else {
+    m_envelope_statut[i] = m_envelope_statut[i] + m_attack_step;
+  }
+
+  if (m_envelope_statut[i] > 1.) m_envelope_statut[i] = 1.;
+  if (m_envelope_statut[i] < 0.) m_envelope_statut[i] = 0.;
 }
 
 void SinensisAudioProcessor::computeFrequencyMidiPoly() {
@@ -191,8 +199,8 @@ void SinensisAudioProcessor::computeFrequencyMidiPoly() {
 }
 
 void SinensisAudioProcessor::computeEnvelopesStep() {
-  m_attack_step =(1.f / attack) / m_sample_rate;
-  m_decay_step = (1.f / decay) / m_sample_rate;
+  m_attack_step =(1000.f / (attack * m_sample_rate)) ;
+  m_decay_step = (1000.f / (decay * m_sample_rate)) ;
 }
 
 
@@ -236,7 +244,7 @@ SinensisAudioProcessor::createParams() {
 
   params.push_back(std::make_unique<juce::AudioParameterFloat>(
       "root_frequency", "Root Frequency",
-      juce::NormalisableRange{20.f, 15000.f, 0.1f, 0.1f, false}, 500.f)),
+      juce::NormalisableRange{20.f, 15000.f, 0.00001f, 0.2f, false}, 500.f)),
 
       params.push_back(std::make_unique<juce::AudioParameterFloat>(
           "RATIO", "Ratio", juce::NormalisableRange{0.5f, 2.0f, 0.001f}, 1.5f));
@@ -252,10 +260,10 @@ SinensisAudioProcessor::createParams() {
       juce::NormalisableRange{0.0f, 2.0f, 0.01f}, 0.6f));
 
   params.push_back(std::make_unique<juce::AudioParameterFloat>(
-      "ATTACK", "Attack", juce::NormalisableRange<float>{0.0001f, 3.0f, 0.0001f, 2.f, false},
+      "ATTACK", "Atttack", juce::NormalisableRange<float>{0.0001f, 3.0f, 0.0001f, 0.5f, false},
       0.4f));
   params.push_back(std::make_unique<juce::AudioParameterFloat>(
-      "DECAY", "Decay", juce::NormalisableRange<float>{0.0001f, 3.0f, 0.0001f, 2.f, false},
+      "DECAY", "Decay", juce::NormalisableRange<float>{0.0001f, 3.0f, 0.0001f, 0.5f, false},
       0.4f));
   params.push_back(std::make_unique<juce::AudioParameterFloat>(
       "DRYWET", "DryWet", juce::NormalisableRange<float>{0.f, 1.0f, 0.0001f, 1.f, false},
@@ -294,15 +302,21 @@ void SinensisAudioProcessor::setParam() {
       static_cast<Sinensis::BandMode>(band_mode);
 
   // PARAM
-  sinensis_parameters.root_frequency =
-      *parameters.getRawParameterValue("root_frequency");
+  float root = *parameters.getRawParameterValue("root_frequency");
+  // root -= 20.f;
+  // root = root / 15000.f;
+  // root = pow(root, 0.6);
+  // root = root * 15000;
+  // root += 20;
+
+  sinensis_parameters.root_frequency = root;
 
   sinensis_parameters.ratio = *parameters.getRawParameterValue("RATIO");
   sinensis_parameters.resonance = *parameters.getRawParameterValue("RESONANCE");
   sinensis_parameters.band_selector =
       *parameters.getRawParameterValue("band_selector");
-  sinensis_parameters.output_volume =
-      *parameters.getRawParameterValue("OUTPUTVOLUME");
+  // sinensis_parameters.output_volume =
+  //     *parameters.getRawParameterValue("OUTPUTVOLUME");
   // ENVELOPPE
   attack = *parameters.getRawParameterValue("ATTACK");
   decay = *parameters.getRawParameterValue("DECAY");

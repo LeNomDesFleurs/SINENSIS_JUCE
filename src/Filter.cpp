@@ -18,8 +18,8 @@ namespace Filter {
 BPF::BPF() {}
 BPF::BPF(float freq, float Q) { setParam(freq, Q); }
 //  BPF() {}
-void BPF::setSampleRate(float sampling_frequency) {
-  m_sampling_frequency = sampling_frequency;
+void BPF::setSampleRate(float sample_rate) {
+  m_sample_rate = sample_rate;
 }
 void BPF::computeBiquadCoef() {
   m_a_gain[0] = 1 + m_alpha;
@@ -46,32 +46,33 @@ void BPF::setParam(float frequence, float Q) {
   }
   m_fc = frequence;
   m_Q = Q;
-  m_omega = 2.f * PI * (m_fc / 48000.f);
+  m_omega = 2.f * PI * (m_fc / m_sample_rate);
   m_cosomega = cosf(m_omega);
   m_sinomega = sinf(m_omega);
   m_alpha = m_sinomega / (2 * m_Q);
   computeBiquadCoef();
 }
 
+float BPF::saturate(float input) {
+  float max = 1.f;
+
+  // input = pow(input, 1. / 2.);
+  // additionnal clipping
+  if (input < -max) {input = -max;}
+  if (input > max) {input = max;}
+
+  return input;
+  // m_saturation_memory = input;
+}
+
 float BPF::process(float b0) {
   // feedback & clipping
   float feedback = m_a[0];
-  // 1500 choosed by experimentation w/ sinensis, self osc around Q = 38
-  feedback *= (m_Q / 1500.F);
-  if (feedback < -0.95) {
-    float overtaking = feedback + 0.95f;
-    feedback = -0.95f - (overtaking / 5.f);
-  }
-  if (feedback > 0.95f) {
-    float overtaking = feedback - 0.95f;
-    feedback = 0.95f + (overtaking / 5.f);
-  }
-  if (feedback > 1.0f) {
-    feedback = 1.0f;
-  }
-  if (feedback < -1.0f) {
-    feedback = -1.0f;
-  }
+  // 1050 choosed by experimentation, get close to selfosc
+  feedback *= (m_Q / 1050.F);
+
+  feedback = saturate(feedback);
+
   b0 += feedback;
   // shift new value in
   m_b[2] = m_b[1];

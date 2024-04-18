@@ -50,7 +50,7 @@ class SinensisAudioProcessorEditor
   void drawBandSelectionWidget(Graphics& g);
   void drawFrequencyWidget(juce::Graphics& g);
 //   juce::Colour getGradient(float value);
-  void updateModes();
+  // void updateModes();
 //   void computeLowHigh();
 //   void computeOddEven();
 //   void computePeak();
@@ -81,7 +81,7 @@ class SinensisAudioProcessorEditor
       attackSlider, decaySlider, dryWetSlider;
   std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>
       BandSelectorAttachement, ratioAttachement, cutoffFrequencyAttachement,
-      attackAttachement, decayAttachement, QAttachement, dryWetAttachment;
+      attackAttachement, decayAttachement, QAttachement, dryWetAttachement;
 
   // BUTTON
   juce::ToggleButton lowHighButton{"L | H"}, oddEvenButton{"O | E"},
@@ -115,9 +115,11 @@ std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>
 
   Sinensis editorSinensis;
 
-//   float ratio;
-//   float band_selector;
-//   float root_frequency;
+  std::array<bool, 12> note_lock;
+
+  //   float ratio;
+  //   float band_selector;
+  //   float root_frequency;
   bool background_generated = false;
   bool midi_mode = false;
   //   float m_frequency[6];

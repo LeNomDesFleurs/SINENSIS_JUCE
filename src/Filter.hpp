@@ -38,16 +38,17 @@ class BPF {
   float m_cosomega{0.0f};
   float m_sinomega{0.0f};
   float m_alpha{0.0f};
+  float m_saturation_memory;
 
-  float m_sampling_frequency{48000.0};
+  float m_sample_rate{48000.0};
 
  public:
   BPF();
   BPF(float freq, float Q);
   // inline BPF() {}
-  void setSampleRate(float sampling_frequency);
+  void setSampleRate(float sample_rate);
   void computeBiquadCoef();
-
+  float saturate(float input);
   void setParam(float frequence, float Q);
 
   float process(float b0);

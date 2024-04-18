@@ -32,6 +32,9 @@ SinensisAudioProcessorEditor::SinensisAudioProcessorEditor(
 
   parametersChanged = false;
 
+  editorSinensis.m_parameters.band_selector = 0.3;
+  editorSinensis.computeGain();
+
   setSize(300, 600);
 }
 
@@ -44,10 +47,14 @@ SinensisAudioProcessorEditor::~SinensisAudioProcessorEditor() {
 
 void SinensisAudioProcessorEditor::paintOverChildren(juce::Graphics& g) {
   // if (!background_generated) {
-  editorSinensis.m_parameters.root_frequency =
-      *apvts->getRawParameterValue("root_frequency");
-  updateModes();
-  editorSinensis.processSinensis(0);
+
+  editorSinensis.updateFrequencies(
+      *apvts->getRawParameterValue("RATIO"),
+      *apvts->getRawParameterValue("root_frequency"), note_lock);
+
+  editorSinensis.updateBandGain(
+    static_cast<Sinensis::BandMode>((int)*apvts->getRawParameterValue("BANDMODE")), 
+    *apvts->getRawParameterValue("band_selector"));
 
   if (midi_mode) {
     attackSlider.setVisible(true);
@@ -171,14 +178,15 @@ std::vector<juce::Component*> SinensisAudioProcessorEditor::getComps() {
 
 std::vector<juce::Slider*> SinensisAudioProcessorEditor::getSliderComps() {
   return {&attackSlider,       &decaySlider, &cutoffFrequencySlider,
-          &BandSelectorSlider, &ratioSlider, &QSlider, &dryWetSlider};
+          &BandSelectorSlider, &ratioSlider, &QSlider,
+          &dryWetSlider};
 }
 
 std::vector<juce::Button*> SinensisAudioProcessorEditor::getButtonComps() {
-  return {&lowHighButton,  &oddEvenButton,  &peakButton, &midiPolyButton, &cButton,      &cSharpButton,
-          &dButton,        &dSharpButton,   &eButton,      &fButton,
-          &fSharpButton,   &gButton,        &gSharpButton, &aButton,
-          &aSharpButton,   &bButton};
+  return {&lowHighButton, &oddEvenButton, &peakButton,   &midiPolyButton,
+          &cButton,       &cSharpButton,  &dButton,      &dSharpButton,
+          &eButton,       &fButton,       &fSharpButton, &gButton,
+          &gSharpButton,  &aButton,       &aSharpButton, &bButton};
 }
 
 void SinensisAudioProcessorEditor::setButtonParameters() {
@@ -187,11 +195,9 @@ void SinensisAudioProcessorEditor::setButtonParameters() {
     button->setLookAndFeel(&otherLookAndFeel);
   }
 
-
   lowHighButton.setRadioGroupId(2);
   oddEvenButton.setRadioGroupId(2);
   peakButton.setRadioGroupId(2);
-
 
   juce::Array<juce::Button*> band_modes_buttons;
   band_modes_buttons.add(&lowHighButton);
@@ -199,8 +205,8 @@ void SinensisAudioProcessorEditor::setButtonParameters() {
   band_modes_buttons.add(&peakButton);
 
   midiPolyButtonAttachement.reset(
-    new juce::AudioProcessorValueTreeState::ButtonAttachment(*apvts, "MIDIMODE",
-                                                               midiPolyButton));
+      new juce::AudioProcessorValueTreeState::ButtonAttachment(
+          *apvts, "MIDIMODE", midiPolyButton));
 
   band_modes_radio_group = std::make_unique<RadioButtonAttachment>(
       *apvts->getParameter("BANDMODE"), band_modes_buttons, "BANDMODE", 2);
@@ -217,6 +223,9 @@ void SinensisAudioProcessorEditor::setButtonParameters() {
   dSharpButtonAttachement.reset(
       new juce::AudioProcessorValueTreeState::ButtonAttachment(*apvts, "DSHARP",
                                                                dSharpButton));
+  eButtonAttachement.reset(
+      new juce::AudioProcessorValueTreeState::ButtonAttachment(*apvts, "E",
+                                                               eButton));
   fButtonAttachement.reset(
       new juce::AudioProcessorValueTreeState::ButtonAttachment(*apvts, "F",
                                                                fButton));
@@ -277,6 +286,9 @@ void SinensisAudioProcessorEditor::setSlidersParameters() {
   decayAttachement.reset(
       new juce::AudioProcessorValueTreeState::SliderAttachment(*apvts, "DECAY",
                                                                decaySlider));
+  dryWetAttachement.reset(
+      new juce::AudioProcessorValueTreeState::SliderAttachment(*apvts, "DRYWET",
+                                                               dryWetSlider));
   cutoffFrequencyAttachement.reset(
       new juce::AudioProcessorValueTreeState::SliderAttachment(
           *apvts, "root_frequency", cutoffFrequencySlider));
@@ -295,47 +307,17 @@ void SinensisAudioProcessorEditor::parameterValueChanged(int parameterIndex,
       // editorSinensis.m_parameters.root_frequency = newValue;
       break;
     case 5:
-      editorSinensis.m_parameters.band_selector = newValue;
+      // editorSinensis.m_parameters.band_selector = newValue;
       break;
     case 3:
-      editorSinensis.m_parameters.ratio = (newValue * 1.5) + 0.5;
+      // editorSinensis.m_parameters.ratio = (newValue * 1.5) + 0.5;
       break;
-    case 9:
-      editorSinensis.m_parameters.note_lock[0] = newValue > 0.5;
-      break;
-    case 10:
-      editorSinensis.m_parameters.note_lock[1] = newValue > 0.5;
-      break;
-    case 11:
-      editorSinensis.m_parameters.note_lock[2] = newValue > 0.5;
-      break;
-    case 12:
-      editorSinensis.m_parameters.note_lock[3] = newValue > 0.5;
-      break;
-    case 13:
-      editorSinensis.m_parameters.note_lock[4] = newValue > 0.5;
-      break;
-    case 14:
-      editorSinensis.m_parameters.note_lock[5] = newValue > 0.5;
-      break;
-    case 15:
-      editorSinensis.m_parameters.note_lock[6] = newValue > 0.5;
-      break;
-    case 16:
-      editorSinensis.m_parameters.note_lock[7] = newValue > 0.5;
-      break;
-    case 17:
-      editorSinensis.m_parameters.note_lock[8] = newValue > 0.5;
-      break;
-    case 18:
-      editorSinensis.m_parameters.note_lock[9] = newValue > 0.5;
-      break;
-    case 19:
-      editorSinensis.m_parameters.note_lock[10] = newValue > 0.5;
-      break;
-    case 20:
-      editorSinensis.m_parameters.note_lock[11] = newValue > 0.5;
-      break;
+  }
+  int index_start = 10;
+  for (int i = 0; i < 12; i++) {
+    if (parameterIndex == i + index_start) {
+      note_lock[i] = newValue > 0.5;
+    }
   }
 }
 
@@ -380,13 +362,7 @@ void SinensisAudioProcessorEditor::drawBandSelectionWidget(Graphics& g) {
   }
 }
 
-void SinensisAudioProcessorEditor::updateModes() {
-  int band_mode = static_cast<int>(*apvts->getRawParameterValue("BANDMODE"));
 
-  editorSinensis.m_parameters.band_selector_mode =
-      static_cast<Sinensis::BandMode>(band_mode);
-
-}
 
 void SinensisAudioProcessorEditor::drawFrequencyWidget(juce::Graphics& g) {
   std::array<float, 6> gains = editorSinensis.m_gain;
@@ -399,7 +375,7 @@ void SinensisAudioProcessorEditor::drawFrequencyWidget(juce::Graphics& g) {
   juce::Path main_line;
   g.setColour(CustomColors::getGradient(gains[0]));
 
-  float shapedFrequency = std::pow((frequencies[0] - 30) / 14970., 0.5);
+  float shapedFrequency = std::pow((frequencies[0] - 20) / 14970., 0.3);
 
   GraphicTools::addLine(main_line, x_position + (width * shapedFrequency),
                         y_position, x_position + (width * shapedFrequency),
@@ -409,7 +385,7 @@ void SinensisAudioProcessorEditor::drawFrequencyWidget(juce::Graphics& g) {
 
   for (int i = 1; i < 6; i++) {
     juce::Path other_bands;
-    float shapedFrequency = std::pow((frequencies[i] - 30) / 14970., 0.5);
+    float shapedFrequency = std::pow((frequencies[i] - 20) / 14970., 0.3);
 
     GraphicTools::addLine(other_bands, x_position + (width * shapedFrequency),
                           y_position, x_position + (width * shapedFrequency),

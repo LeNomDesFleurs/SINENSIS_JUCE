@@ -6,6 +6,7 @@ PolyMidiBuffer::PolyMidiBuffer(int size) {
     notes_order.resize(size);
     std::fill(notes.begin(), notes.end(), 0);
     this->size = size;
+    counter = 0;
 }
 
   void PolyMidiBuffer::addNote(int note_number) {
@@ -31,6 +32,7 @@ PolyMidiBuffer::PolyMidiBuffer(int size) {
       for (int i = 0; i < size; i++) {
         if (notes[i] == 0) {
           notes[i] = note_number;
+          counter++;
           return;
         }
       }

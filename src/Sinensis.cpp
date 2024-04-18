@@ -21,7 +21,55 @@ Sinensis::Sinensis() {
 Sinensis::~Sinensis() {}
 
 void Sinensis::setParameters(Sinensis::Parameters parameters) {
-  m_parameters = parameters;
+  updateFrequencies(parameters.ratio, parameters.root_frequency,
+                    parameters.note_lock);
+  updateBandGain(parameters.band_selector_mode, parameters.band_selector);
+  updateQ(parameters.resonance);
+  // m_parameters = parameters;
+}
+
+void Sinensis::updateBandGain(BandMode band_selector_mode,
+                              float band_selector) {
+  if (m_parameters.band_selector_mode == band_selector_mode &&
+      m_parameters.band_selector == band_selector) {
+    return;
+  }
+  m_parameters.band_selector_mode = band_selector_mode;
+  m_parameters.band_selector = band_selector;
+  computeGain();
+}
+
+void Sinensis::setFrequency(float root_frequency) {
+  if (m_parameters.root_frequency == root_frequency) {
+    return;
+  }
+  m_parameters.root_frequency = root_frequency;
+  computeFrequencies();
+  update_bpf = true;
+}
+
+void Sinensis::updateFrequencies(float ratio, float root_frequency,
+                                 std::array<bool, 12> note_lock) {
+  if (m_parameters.ratio == ratio &&
+      m_parameters.root_frequency == root_frequency &&
+      m_parameters.note_lock == note_lock) {
+    return;
+  }
+  m_parameters.ratio = ratio;
+  m_parameters.root_frequency = root_frequency;
+  m_parameters.note_lock = note_lock;
+
+  computeFrequencies();
+  update_bpf = true;
+}
+
+void Sinensis::updateQ(float resonance) {
+  if (m_parameters.resonance == resonance) {
+    return;
+  }
+  m_parameters.resonance = resonance;
+  computeQ();
+  update_bpf = true;
 }
 
 float Sinensis::processSample(float input) {
@@ -35,30 +83,19 @@ float Sinensis::processSample(float input) {
 }
 
 float Sinensis::processSinensis(float input) {
-
-  computeFrequencies();
-  computeGain();
-  computeQ();
-  prepareBpf();
-
+  if (update_bpf) {
+    prepareBpf();
+    update_bpf = false;
+  }
   return processSample(input);
 }
 
+void updateParameters(float input) {}
+
 void Sinensis::attenuate(float& input) {
-  input *= m_parameters.output_volume;
+  // input *= m_parameters.output_volume;
   input *= 0.9;
-  input *= 1 - (pow(m_parameters.resonance / 100, 0.5) / 1.5);
-}
-
-void Sinensis::saturate(float& input) {
-  float max = 1.f;
-
-  input = pow(input, 1. / 2.);
-  // additionnal clipping
-  if (input < -max) input = -max;
-  if (input > max) input = max;
-
-  m_saturation_memory = input;
+  input *= 1 - (pow(m_parameters.resonance / 200, 0.5) / 1.5);
 }
 
 void Sinensis::computeFrequencies() {
@@ -71,12 +108,12 @@ void Sinensis::computeFrequencies() {
     }
     thisBandFreq = truncf(thisBandFreq);
     // frequency folding
-    while (thisBandFreq > 15000.f || thisBandFreq < 30.f) {
+    while (thisBandFreq > 15000.f || thisBandFreq < 20.f) {
       if (thisBandFreq > 15000.F) {
         thisBandFreq = 15000.f - (thisBandFreq - 15000.f);
       }
-      if (thisBandFreq < 30.f) {
-        thisBandFreq = 30.f + (30.f - thisBandFreq);
+      if (thisBandFreq < 20.f) {
+        thisBandFreq = 20.f + (20.f - thisBandFreq);
       }
     }
 

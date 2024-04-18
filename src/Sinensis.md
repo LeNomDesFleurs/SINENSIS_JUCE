@@ -3,25 +3,21 @@
 ## 🖼️ UI
 
 -   [ ] charte d'épaisseur des traits ?
--   [ ] finish dry wet slider
 
 ## 🛠️ Functionality
 
--   [ ] changer la courbe de la root frequency
--   [ ] Rework to resonance gain attenuation to feel the volume increase
 -   [ ] pitch wheel
 -   [ ] baisser l'attaque minimale
--   [ ] add dry wet cross fade to processor
+-   [ ] lower volume a bit
 
 ## ⚙️ Optimization
 
 -   [ ] limit band control widget refresh to certain parameter
--   [ ] limit frequency and gain calculation to parameter modification
 
 ## 🪲 Bug
-
--   [ ] jump in band select ui at beginning
--   [ ] put the feedback saturation in the correct file
+-   [x] ratio don't update root freq
+-   [ ] envelope not working
+-   [x] root freq in midi not working
 -   [ ] attack and decay not working properly
 -   [ ] incorrect management of midi note, the note must be kept to the same voice
 
@@ -31,15 +27,23 @@
 
 ## Dump
 
--   [-] Q->0 = Dry signal
--   [x] Rework poly mode to allow 6x6 filter band
--   [x] Only one voice receiveing the correct parameters
+-   [x] ~~changer la courbe de la root frequency~~
+-   [x] put the feedback saturation in the correct file
+-   [x] ~~limit frequency and gain calculation to parameter modification~~
+-   [x] note lock don't update frequency bands
+-   [x] ~~Rework to resonance gain attenuation to feel the volume increase~~
+-   [x] ~~jump in band select ui at beginning~~
+-   [x] ~~add dry wet cross fade to processor~~
+-   [x] ~~finish dry wet slider~~
+-   [-] ~~Q->0 = Dry signal~~
+-   [x] ~~Rework poly mode to allow 6x6 filter band~~
+-   [x] ~~Only one voice receiveing the correct parameters~~
       `not the good function call, processSinensis / processSample`
--   [x] Lock note
--   [x] bug in note lock max value, clip to max note in ui in dsp
--   [x] cutoff widget not appearing anymore
--   [x] piano widget pour lock note
--   [x] widget horizontal / vertical
+-   [x] ~~Lock note~~
+-   [x] ~~bug in note lock max value, clip to max note in ui in dsp~~
+-   [x] ~~cutoff widget not appearing anymore~~
+-   [x] ~~piano widget pour lock note~~
+-   [x] ~~widget horizontal / vertical~~
 -   [x] ~~Comment set les défauts ? l'ui commence toujours en Odd/even bizarrement~~
 -   [-] ~~envoyer pounter vers objet sinensis à l'éditeur, avoir une version locale de l'objet, comparer et copier~~
 -   [-] ~~Make ratio and band control inactive in poly mode~~
