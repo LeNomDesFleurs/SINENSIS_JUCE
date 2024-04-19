@@ -15,8 +15,19 @@ namespace noi {
 
 namespace Filter {
 
-BPF::BPF() {}
-BPF::BPF(float freq, float Q) { setParam(freq, Q); }
+BPF::BPF() {
+  m_b = {0.0f, 0.0f, 0.0f};
+m_a = {0.0f, 0.0f, 0.0f};
+m_b_gain = {0.0f, 0.0f, 0.0f};
+m_a_gain = {0.0f, 0.0f, 0.0f};
+}
+BPF::BPF(float freq, float Q) { setParam(freq, Q); 
+
+m_b = {0.0f, 0.0f, 0.0f};
+m_a = {0.0f, 0.0f, 0.0f};
+m_b_gain = {0.0f, 0.0f, 0.0f};
+m_a_gain = {0.0f, 0.0f, 0.0f};
+}
 //  BPF() {}
 void BPF::setSampleRate(float sample_rate) {
   m_sample_rate = sample_rate;

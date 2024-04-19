@@ -10,7 +10,7 @@
 
 #pragma once
 #include <vector>
-
+#include <array>
 #include "Filter.hpp"
 #include "JuceHeader.h"
 #include "Tools.hpp"

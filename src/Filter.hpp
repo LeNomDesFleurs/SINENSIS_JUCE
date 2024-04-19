@@ -14,6 +14,7 @@
 
 #include <string>
 #include <vector>
+#include <array>
 // #include "outils.hpp"
 
 const float PI = 3.14159f;
@@ -28,11 +29,11 @@ class BPF {
   float m_fc = 0.0;
   float m_Q = 0.0;
   // Previous Values Memory
-  std::array<float, 3>m_b = {0.0f, 0.0f, 0.0f};
-  std::array<float, 3>m_a = {0.0f, 0.0f, 0.0f};
+  std::array<float, 3> m_b;
+  std::array<float, 3> m_a;
   // Biquad Coef
-  std::array<float, 3>m_b_gain = {0.0f, 0.0f, 0.0f};
-  std::array<float, 3>m_a_gain = {0.0f, 0.0f, 0.0f};
+  std::array<float, 3> m_b_gain;
+  std::array<float, 3> m_a_gain;
   // Compute Values
   float m_omega = 0.0f;
   float m_cosomega = 0.0f;
