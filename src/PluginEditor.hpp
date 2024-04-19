@@ -115,19 +115,12 @@ std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>
 
   Sinensis editorSinensis;
 
-  std::array<bool, 12> note_lock;
+  std::array<bool, 12> note_lock = {false,false,false,false,false,false,false,false,false,false,false,false};
 
-  //   float ratio;
-  //   float band_selector;
-  //   float root_frequency;
+
   bool background_generated = false;
   bool midi_mode = false;
-  //   float m_frequency[6];
-  //   bool note_lock[12];
 
-  //   std::array<float, 6> gains;
-  //   Sinensis::BandMode band_selector_mode = Sinensis::BandMode::LowHigh;
-  //   Sinensis::MidiMode midi_mode;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SinensisAudioProcessorEditor)
 };

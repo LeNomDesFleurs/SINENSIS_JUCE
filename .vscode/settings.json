@@ -4,6 +4,9 @@
     "cmake.buildDirectory": "${workspaceFolder}/build",
     "git.ignoreLimitWarning": true,
     "clangd.arguments": [
+        "-log=verbose",
+        "-pretty",
+        "-Wall",
         "-clang-tidy",
         "-background-index",
         "-compile-commands-dir=${workspaceFolder}/build",

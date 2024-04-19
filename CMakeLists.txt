@@ -10,9 +10,12 @@ if(CMAKE_EXPORT_COMPILE_COMMANDS)
 set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
 endif()
 
-IF(APPLE)
-  SET(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE STRING "Build architectures for Mac OS X" FORCE)
-ENDIF(APPLE)
+# IF(APPLE)
+#   SET(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE STRING "Build architectures for Mac OS X" FORCE)
+# ENDIF(APPLE)
+
+# SET(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "Build architectures for Mac OS X" FORCE)
+
 
 # Enable JUCE. Do not use find_package to prevent from mix up with one globally installed.
 add_subdirectory(lib/JUCE)

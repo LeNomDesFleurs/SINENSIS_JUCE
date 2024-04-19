@@ -11,6 +11,7 @@
 
 Sinensis::Sinensis() {
   m_parameters = {Sinensis::BandMode::LowHigh, 218.f, 0.707f, 0.f, 1.5f, false};
+  
   m_sample_rate = 48000;
   computeFrequencies();
   computeGain();

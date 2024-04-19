@@ -63,7 +63,7 @@ class Sinensis {
 
   Sinensis::Parameters m_parameters;
   noi::Filter::BPF m_bpf[6];
-  float m_sample_rate;
+  float m_sample_rate = 48000;
   float m_Q[6];
  
   std::array<float, 6> m_frequency;

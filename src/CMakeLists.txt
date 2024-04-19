@@ -39,7 +39,7 @@ juce_add_plugin(Sinensis
     AU_MAIN_TYPE "kAudioUnitType_MusicEffect"
     # AU_SANDBOX_SAFE TRUE
     # AAX_CATEGORY ""
-     HARDENED_RUNTIME_ENABLED TRUE # macOS app settings
+    HARDENED_RUNTIME_ENABLED TRUE # macOS app settings
     # HARDENED_RUNTIME_OPTIONS
     # APP_SANDBOX_ENABLED
     # APP_SANDBOX_INHERIT

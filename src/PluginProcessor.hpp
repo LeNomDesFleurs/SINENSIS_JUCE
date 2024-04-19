@@ -79,16 +79,16 @@ class SinensisAudioProcessor : public juce::AudioProcessor
 
   std::array<std::array<Sinensis, 2>, 6> sinensis;
 
-  bool MidiOn;
+  bool MidiOn= false;
 
-  float m_sample_rate;
+  float m_sample_rate = 48000;
   float attack;
   float decay;
   float m_attack_step;
   float m_decay_step;
-  float pitch_bend;
+  float pitch_bend = 0;
   std::array<float, 6> m_envelope_statut;
-  float drywet;
+  float drywet = 1;
 
   PolyMidiBuffer m_notes{6};
   std::array<float, 6> root_frequencies;

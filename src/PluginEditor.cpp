@@ -363,7 +363,7 @@ void SinensisAudioProcessorEditor::drawFrequencyWidget(juce::Graphics& g) {
   juce::Path main_line;
   g.setColour(CustomColors::getGradient(gains[0]));
 
-  float shapedFrequency = std::pow((frequencies[0] - 20) / 14970., 0.3);
+  float shapedFrequency = std::pow((editorSinensis.m_frequency[0] - 20) / 14970., 0.3);
 
   GraphicTools::addLine(main_line, x_position + (width * shapedFrequency),
                         y_position, x_position + (width * shapedFrequency),
@@ -373,7 +373,7 @@ void SinensisAudioProcessorEditor::drawFrequencyWidget(juce::Graphics& g) {
 
   for (int i = 1; i < 6; i++) {
     juce::Path other_bands;
-    float shapedFrequency = std::pow((frequencies[i] - 20) / 14970., 0.3);
+    float shapedFrequency = std::pow((editorSinensis.m_frequency[i] - 20) / 14970., 0.3);
 
     GraphicTools::addLine(other_bands, x_position + (width * shapedFrequency),
                           y_position, x_position + (width * shapedFrequency),
