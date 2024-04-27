@@ -6,6 +6,7 @@
 ## 🛠️ Functionality
 
 -   [ ] lower volume a bit
+-   [ ] Midi input if midi is off locks the note 
 
 ## ⚙️ Optimization
 

@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.15)
 
+# cross compile for universal macOS binaries
+set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)
+
 PROJECT(SINENSIS
 LANGUAGES CXX
 VERSION 0.0.2
