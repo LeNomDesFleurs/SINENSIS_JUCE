@@ -14,8 +14,8 @@ Cmake - Ninja - LLVM - LLDB
 Times New Roman - Italic
 
 ### Color Palette : 
-- ![#FFef3d59](https://placehold.co/15x15/f03c15/f03c15.png) `#FFef3d59`
-- ![#FFe17a47](https://placehold.co/15x15/f03c15/f03c15.png) `#FFe17a47`
-- ![#FFEFC958](https://placehold.co/15x15/f03c15/f03c15.png) `#FFEFC958`
-- ![#FF4AB19D](https://placehold.co/15x15/f03c15/f03c15.png) `#FF4AB19D`
-- ![#FF344E5C](https://placehold.co/15x15/f03c15/f03c15.png) `#FF344E5C`
+- ![#FFEF3D59](https://placehold.co/15x15/ef3d59/ef3d59.png) `#FFEF3D59`
+- ![#FFe17a47](https://placehold.co/15x15/e17a47/e17a47.png) `#FFE17A47`
+- ![#FFEFC958](https://placehold.co/15x15/efc958/efc958.png) `#FFEFC958`
+- ![#FF4AB19D](https://placehold.co/15x15/4ab19d/4ab19d.png) `#FF4AB19D`
+- ![#FF344E5C](https://placehold.co/15x15/344e5c/344e5c.png) `#FF344E5C`
