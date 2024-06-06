@@ -16,7 +16,7 @@ juce_add_plugin(Sinensis
     #   ICON_SMALL "${CMAKE_SOURCE_DIR}/Assets/icon16.png " 
     COMPANY_NAME "NOI"                    # Specify the name of the plugin's author
     COMPANY_COPYRIGHT "NOI"
-    COMPANY_WEBSITE "https://lenomdesfleurs.github.io/Blog/"
+    COMPANY_WEBSITE "https://lndf.fr"
     COMPANY_EMAIL "Thomasvguillory@gmail.com"
     IS_SYNTH FALSE                       # Is this a synth or an effect?
     NEEDS_MIDI_INPUT TRUE               # Does the plugin need midi input?

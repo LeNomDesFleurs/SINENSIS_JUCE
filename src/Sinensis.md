@@ -189,3 +189,9 @@ j'ai essayé `JUCE_VST_NUM_MIDI_INS 1` qui n'a pas fonctionné.
 -   [x] add buttons
 -   [ ] update frequency band UI function
 -   [ ] button
+
+## Weird command line header error
+
+```bash
+sudo xcode-select -switch /Library/Developer/CommandLineTools
+```
