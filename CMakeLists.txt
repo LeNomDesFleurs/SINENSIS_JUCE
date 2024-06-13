@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 
 # cross compile for universal macOS binaries
 set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)
-set(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING "" FORCE)
+# set(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING "" FORCE)
 
 # set(CMAKE_C_COMPILER_version "3.4")
 # set(CMAKE_CXX_COMPILER_version "3.4")
