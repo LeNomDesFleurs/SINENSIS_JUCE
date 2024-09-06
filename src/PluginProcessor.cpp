@@ -130,9 +130,7 @@ void SinensisAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
   }
 
   setParam();
-
   if (MidiOn) {
-    printf("test1");
     extractMidiPoly(midiBuffer);
     computeFrequencyMidiPoly();
     computeEnvelopesStep();
@@ -143,10 +141,12 @@ void SinensisAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
         sinensis[voice][channel].setFrequency(root_frequencies[voice]);
       }
     }
-    printf("test2");
   }
-
-  for (auto channel = 0; channel < 2; ++channel) {
+  int iteration = 2;
+  if (totalNumInputChannels != 2) {
+    iteration = 1;
+  }
+  for (auto channel = 0; channel < iteration; ++channel) {
     // to access the sample in the channel as a C-style array
     auto channelSamples = buffer.getWritePointer(channel);
 
