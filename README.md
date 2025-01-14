@@ -9,6 +9,7 @@ Cmake - Ninja - LLVM - LLDB
 
 ### Info and download :
 [Siensis web page](https://lndf.fr/NOI/Sinensis.html)
+[🏗️ Build it yourself !](https://github.com/LeNomDesFleurs/HELLEBORE_JUCE/wiki/Building)
 
 ### Font : 
 Times New Roman - Italic
@@ -21,4 +22,4 @@ Times New Roman - Italic
 - ![#FF344E5C](https://placehold.co/15x15/344e5c/344e5c.png) `#FF344E5C`
 
 
-[More info to build it yourself](https://github.com/LeNomDesFleurs/HELLEBORE_JUCE/wiki/Building)
+
