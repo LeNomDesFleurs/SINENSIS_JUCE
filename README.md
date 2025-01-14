@@ -19,3 +19,6 @@ Times New Roman - Italic
 - ![#FFEFC958](https://placehold.co/15x15/efc958/efc958.png) `#FFEFC958`
 - ![#FF4AB19D](https://placehold.co/15x15/4ab19d/4ab19d.png) `#FF4AB19D`
 - ![#FF344E5C](https://placehold.co/15x15/344e5c/344e5c.png) `#FF344E5C`
+
+
+[More info to build it yourself](https://github.com/LeNomDesFleurs/HELLEBORE_JUCE/wiki/Building)
