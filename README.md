@@ -8,8 +8,8 @@ Sinensis is an audio plugin.
 Cmake - Ninja - LLVM - LLDB
 
 ### Info and download :
-[Siensis web page](https://lndf.fr/NOI/Sinensis.html)
-[🏗️ Build it yourself !](https://github.com/LeNomDesFleurs/HELLEBORE_JUCE/wiki/Building)
+- [Sinensis web page](https://lndf.fr/NOI/Sinensis.html)
+- [🏗️ Build it yourself !](https://github.com/LeNomDesFleurs/HELLEBORE_JUCE/wiki/Building)
 
 ### Font : 
 Times New Roman - Italic
